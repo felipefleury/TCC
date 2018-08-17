@@ -14,6 +14,7 @@ provider:
   environment:
     USUARIOS_TABLE: ${self:custom.tableName}
     AWS_DEPLOY_REGION: ${self:provider.region}
+    JWT_ENCRYPTION_CODE: "CE2784CB-EFF6-4AFB-A56F-5EF156E85F80"
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -35,6 +36,7 @@ provider:
 functions:
   login:
     handler: handler.authenticate
+    memorySize: 128
     events:
       - http: 
           method: POST
@@ -42,6 +44,7 @@ functions:
           private: false
   createUser:
     handler: handler.createUser
+    memorySize: 128
     events:
       - http: 
           method: POST
