@@ -50,7 +50,14 @@ functions:
           method: POST
           path: /users
           private: false
-
+  deleteUser:
+    handler: handler.deleteUser
+    memorySize: 128
+    events:
+      - http: 
+          method: DELETE
+          path: /users
+          private: false
 
 resources:
   Resources:

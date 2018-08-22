@@ -11,8 +11,41 @@ const dynamoDb = new AWS.DynamoDB.DocumentClient({
     region: AWS_DEPLOY_REGION
 });
 
-// Create the DynamoDB service object
-const ddb = new AWS.DynamoDB({apiVersion: '2012-10-08'});
+
+module.exports.deleteUser = async (event, context) => {
+
+  let _parsed;// = value;
+  try {
+    _parsed = JSON.parse(event.body);
+  } catch (err) {
+    console.error(`Could not parse requested JSON ${value}: ${err.stack}`);
+    throw err;
+  }  
+  const id = _parsed.id;
+  console.log(id);
+  var key = { "id": id };
+  const params = {
+    Key: key, 
+    TableName: USUARIOS_TABLE
+  };
+
+  console.log("Attempting a conditional delete...");
+  return await new Promise((resolve, reject) => {
+    dynamoDb.delete(params, (error, data) => {
+      if (error) {
+        console.error("Unable to delete item. Error JSON:" + JSON.stringify(error, null, 2));
+        resolve({
+          statusCode: 400,
+          body: JSON.stringify({error:`Could not delete user: ${error.stack}`})
+        });
+  
+      } else {
+        resolve({ statusCode: 200});
+      };
+    });
+  });
+  
+}
 
 module.exports.authenticate = async (event, context) => {
   
@@ -22,12 +55,11 @@ module.exports.authenticate = async (event, context) => {
   } catch (err) {
     console.error(`Could not parse requested JSON ${event.body}: ${err.stack}`);
     return {
-      statusCode: 500,
-      error: `Could not parse requested JSON: ${err.stack}`
+      statusCode: 500
+      //body: JSON.stringify({error:`Could not parse json: ${err.stack}`})
     };
   }
   const { username, password } = _parsed;
-
 
   var key = { "username": username };
   const params = {
@@ -41,118 +73,108 @@ module.exports.authenticate = async (event, context) => {
         console.log(`autenticate ERROR=${error.stack}`);
           resolve({
             statusCode: 400,
-            error: `Could not autenticate: ${error.stack}`
+            body: JSON.stringify({error:`Could not autenticate: ${error.stack}`})
           });
   
       } else {
         var senha = data["Item"]["password"];
-        console.log(senha);
-        console.log(password);
-        console.log(`autenticate data=${senha}`);
         if (password == senha) {
           // caso a senha do usuário seja encontrada.... iremos criar um token:
           var token = jwt.sign(data, JWT_ENCRYPTION_CODE, {
             expiresIn: '1h' //o token irá expirar em 24 horas
           });
-          console.log(token);
           resolve({ statusCode: 200, body: JSON.stringify(token) });
         } else {
-          resolve({ statusCode: 400, body: "Usuario ou senha inválida" });
+          resolve({ statusCode: 400, body: JSON.stringify({error:"Usuario ou senha inválida!"})});
+          
         }
       }
     });
   });
 };
 
-module.exports.createUser = async (event, context) => {
 
+const parseUser = (value) => {
+
+  // Faz a conversao entre json e objeto
   let _parsed;
   try {
-    _parsed = JSON.parse(event.body);
+    _parsed = JSON.parse(value);
+  } catch (err) {
+    console.error(`Could not parse requested JSON ${value}: ${err.stack}`);
+    throw err;
+  }
+  //Valida usuario (campos obrigatorios)
+  if(!validateUser(_parsed)) {
+    throw new Error("Invalid user!");
+  }
+
+  //Adiciona campos automaticos (Data de criacao e alteracao).
+  const timestamp = (new Date()).toISOString();
+  return {..._parsed, id: uuid.v1(), submittedAt: timestamp, updatedAt: timestamp}
+
+}
+
+module.exports.createUser = async (event, context) => {
+  
+  //Carrega usuário enviado via POST
+  let user = null;  
+  let _parsed;
+  try {
+    user = JSON.parse(event.body);
   } catch (err) {
     console.error(`Could not parse requested JSON ${event.body}: ${err.stack}`);
     return {
-      statusCode: 500,
-      error: `Could not parse requested JSON: ${err.stack}`
+      statusCode: 400,
+      body: JSON.stringify({error:"Erro ao carregar dados"})
     };
   }
 
-  const { username, password, nome, tipo, email } = _parsed;
-
-  var teste = {..._parsed, teste:1 }
-
-  console.log(teste);
-
-  if(!validateUser(username, password, nome, tipo, email)) {
+  //Valida usuario (campos obrigatorios)
+  if(!validateUser(user)) {
+    console.error("Usuario invalido");
     return {
-      statusCode: 500,
-      error: 'Not valid!'
-    }
+      statusCode: 400,
+      body: JSON.stringify({error:"Usuario invalido!"})
+    };
   }
-  console.log("Procurando usuario!");
-  
 
-  var value = await getUserByLogin(username);
-  console.log(value);
-  console.log(value.Count);
+  //Adiciona campos automaticos (Data de criacao e alteracao).
+  const timestamp = (new Date()).toISOString();
+  user = {...user, id: uuid.v1(), submittedAt: timestamp, updatedAt: timestamp}
 
-  if(value.Count > 0) {
-    console.log("usuario existente!");
+  // Verifica se ja existe um usuario com esse login (username)
+  var usersWithSameLogin = await getUserByLogin(user.username);
+  if(usersWithSameLogin.Count > 0) {
     return {
-      statusCode: 500,
-      error: "Existente!"
-    }
+      statusCode: 400,
+      body: JSON.stringify({error:"Usuario existente!"})
+    };
   } 
-  var user = userInfo(username, password, nome, tipo, email);
-  
-  
-  
-  saveUsuario(user)
-  .then(result => {
-    console.log(result);
-    return{
-      statusCode: 204
-    }
-  }).catch(error => {
-    console.log(error);
-    return{
-      statusCode: 400
-    }
-  })
-  
-  
-};
 
-
-const saveUsuario = (userInfo) => {
+  //Grava usuário no banco
   const params = {
     TableName: USUARIOS_TABLE,
-    Item: userInfo
+    Item: user
   };
-
-  return dynamoDb.put(params).promise();
-  /* 
   return await new Promise((resolve, reject) => {
     dynamoDb.put(params, (error, data) => {
       if (error) {
         console.log(`createUser ERROR=${error.stack}`);
           resolve({
-            statusCode: 400,
-            error: `Could not create user: ${error.stack}`
+            statusCode: 400//,
+            //body: JSON.stringify(`Could not create user: ${error.stack}`)
           });
-  
       } else {
-        console.log(`createUser data=${JSON.stringify(data)}`);
-        resolve({ statusCode: 200, body: JSON.stringify(params.Item) });
+        resolve({ statusCode: 200, body: JSON.stringify(user) });
       }
     });
   });
-  */
-}
+  
+};
 
-const validateUser = (username, password, nome, tipo, email) => {
-  if (typeof username !== 'string' || typeof password !== 'string' || typeof nome !== 'string' || typeof tipo !== 'string' || typeof email !== 'string') {
-    console.error('Validation Failed');
+const validateUser = (value) => {
+  if (typeof value.username !== 'string' || typeof value.password !== 'string' || typeof value.nome !== 'string' || typeof value.role !== 'string') {
     return false;
   }
   return true;
@@ -161,13 +183,6 @@ const validateUser = (username, password, nome, tipo, email) => {
 const getUserByLogin = (username) => {
 
   var key = { "username": username };
-  /*
-  const params = {
-    Key: key, 
-    IndexName: "username-index",
-    TableName: USUARIOS_TABLE
-  };
-*/
 
   const params = {
   TableName: USUARIOS_TABLE,
@@ -177,50 +192,16 @@ const getUserByLogin = (username) => {
     ExpressionAttributeValues:{ ":username" : username }
 
   }
-/*
-payload = {
-    TableName: USUARIOS_TABLE,
-    IndexName: "email",
-    KeyConditionExpression: "#index = :index_value",
-    ExpressionAttributeNames:{
-        "#index": "email"
-    },
-    ExpressionAttributeValues: {
-        ":index_value": "test@gmail.com" // <----------------
-    },
-    ProjectionExpression: "user_id",
-        ScanIndexForward: false
-    };
-}
-*/
-  console.log("buscar dados");
-  //return dynamoDb.get(params).promise();
 
   return new Promise((resolve, reject) => {
     dynamoDb.scan(params, (error, data) => {
-      console.log("teste");
       if (error) {
         console.log(`getUserByLogin ERROR=${error.stack}`);
           reject(error);
       } else {
-        console.log(data);
           resolve(data);
       }
     });
   });
   
 } 
-
-const userInfo = (username, password, nome, tipo, email) => {
-  const timestamp = new Date().getTime();
-  return {
-    id: uuid.v1(),
-    username: username,
-    email: email,
-    nome: nome,
-    password: password,
-    tipo: tipo,
-    submittedAt: timestamp,
-    updatedAt: timestamp,
-  };
-};
