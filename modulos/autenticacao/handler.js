@@ -185,12 +185,17 @@ const getUserByLogin = (username) => {
   var key = { "username": username };
 
   const params = {
-  TableName: USUARIOS_TABLE,
-  IndexName: "username-index",
-    ProjectionExpression:'username', // remove this string if you want to get not only 'name'
-    FilterExpression:'username = :username',
-    ExpressionAttributeValues:{ ":username" : username }
-
+    TableName: USUARIOS_TABLE,
+    IndexName: "username-index",
+    KeyConditionExpression: 'username = :username',
+    //ExpressionAttributeValues: {
+    //    ":genre": "Rock"
+    //}
+    //,    ProjectionExpression:'username', // remove this string if you want to get not only 'name'
+    //FilterExpression:'username = :username',
+    ExpressionAttributeValues:{ ":username" : username },
+    //ProjectionExpression: "id, username, password",
+    ScanIndexForward: false
   }
 
   return new Promise((resolve, reject) => {
@@ -199,7 +204,8 @@ const getUserByLogin = (username) => {
         console.log(`getUserByLogin ERROR=${error.stack}`);
           reject(error);
       } else {
-          resolve(data);
+        console.log(data);
+        resolve(data);
       }
     });
   });
