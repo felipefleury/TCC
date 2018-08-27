@@ -27,10 +27,20 @@ module.exports.listar = async (event, context) => {
             //body: JSON.stringify(`Could not create user: ${error.stack}`)
           });
       } else {
-        resolve({ statusCode: 200, body: JSON.stringify(data.Items) });
+        resolve({ statusCode: 200, headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Credentials': true, 
+        },  body: JSON.stringify(data.Items) });
       }
     });
   });
+}
+
+const getCorsHeaders = () => {
+  return {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Credentials': true, 
+  }
 }
 
 
@@ -62,7 +72,7 @@ module.exports.apagar = async (event, context) => {
         });
   
       } else {
-        resolve({ statusCode: 200});
+        resolve({ statusCode: 200, headers: getCorsHeaders() });
       };
     });
   });
@@ -120,7 +130,7 @@ module.exports.incluir = async (event, context) => {
             //body: JSON.stringify(`Could not create user: ${error.stack}`)
           });
       } else {
-        resolve({ statusCode: 200, body: JSON.stringify(produto) });
+        resolve({ statusCode: 200, headers: getCorsHeaders(), body: JSON.stringify(produto) });
       }
     });
   });
@@ -185,14 +195,14 @@ module.exports.alterar = async (event, context) => {
             //body: JSON.stringify(`Could not create user: ${error.stack}`)
           });
       } else {
-        resolve({ statusCode: 200, body: JSON.stringify(produto) });
+        resolve({ statusCode: 200, headers: getCorsHeaders(), body: JSON.stringify(produto) });
       }
     });
   });
 }
 
 const validate = (value) => {
-  if (typeof value.descricao !== 'string' || typeof value.codigo !== 'string' ) {
+  if (typeof value.descricao !== 'string' || typeof value.codigo !== 'string' || typeof value.nome !== 'string' ) {
     return false;
   }
   return true;
