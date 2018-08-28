@@ -83,6 +83,12 @@
           "ServerlessDeploymentBucket": {
             "Type": "AWS::S3::Bucket"
           },
+          "EstoqueFornecedorLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/autenticacao-dev-estoqueFornecedor"
+            }
+          },
           "EstoqueProdutoLogGroup": {
             "Type": "AWS::Logs::LogGroup",
             "Properties": {
@@ -93,6 +99,12 @@
             "Type": "AWS::Logs::LogGroup",
             "Properties": {
               "LogGroupName": "/aws/lambda/autenticacao-dev-produtos"
+            }
+          },
+          "ProdutosBuscarLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/autenticacao-dev-produtosBuscar"
             }
           },
           "ProdutoIncluirLogGroup": {
@@ -123,6 +135,12 @@
             "Type": "AWS::Logs::LogGroup",
             "Properties": {
               "LogGroupName": "/aws/lambda/autenticacao-dev-createUser"
+            }
+          },
+          "ListarUsuariosLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/autenticacao-dev-listarUsuarios"
             }
           },
           "DeleteUserLogGroup": {
@@ -172,10 +190,16 @@
                         ],
                         "Resource": [
                           {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/autenticacao-dev-estoqueFornecedor:*"
+                          },
+                          {
                             "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/autenticacao-dev-estoqueProduto:*"
                           },
                           {
                             "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/autenticacao-dev-produtos:*"
+                          },
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/autenticacao-dev-produtosBuscar:*"
                           },
                           {
                             "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/autenticacao-dev-produtoIncluir:*"
@@ -193,6 +217,9 @@
                             "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/autenticacao-dev-createUser:*"
                           },
                           {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/autenticacao-dev-listarUsuarios:*"
+                          },
+                          {
                             "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/autenticacao-dev-deleteUser:*"
                           }
                         ]
@@ -204,10 +231,16 @@
                         ],
                         "Resource": [
                           {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/autenticacao-dev-estoqueFornecedor:*:*"
+                          },
+                          {
                             "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/autenticacao-dev-estoqueProduto:*:*"
                           },
                           {
                             "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/autenticacao-dev-produtos:*:*"
+                          },
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/autenticacao-dev-produtosBuscar:*:*"
                           },
                           {
                             "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/autenticacao-dev-produtoIncluir:*:*"
@@ -223,6 +256,9 @@
                           },
                           {
                             "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/autenticacao-dev-createUser:*:*"
+                          },
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/autenticacao-dev-listarUsuarios:*:*"
                           },
                           {
                             "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/autenticacao-dev-deleteUser:*:*"
@@ -250,6 +286,51 @@
               }
             }
           },
+          "EstoqueFornecedorLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/autenticacao/dev/1535421404774-2018-08-28T01:56:44.774Z/autenticacao.zip"
+              },
+              "FunctionName": "autenticacao-dev-estoqueFornecedor",
+              "Handler": "estoque/estoque.estoqueFornecedor",
+              "MemorySize": 128,
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              },
+              "Runtime": "nodejs8.10",
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "USUARIOS_TABLE": "Usuarios-dev",
+                  "PRODUTOS_TABLE": "Produtos-dev",
+                  "AWS_DEPLOY_REGION": "us-east-2",
+                  "JWT_ENCRYPTION_CODE": "CE2784CB-EFF6-4AFB-A56F-5EF156E85F80",
+                  "SQLCONNECTIONSTRING": "Server=maria.cwjvvoewjryp.us-east-1.rds.amazonaws.com;Database=TCC_Estoque;User Id=userTCC;Password=mg54sasd442@;"
+                }
+              }
+            },
+            "DependsOn": [
+              "EstoqueFornecedorLogGroup",
+              "IamRoleLambdaExecution"
+            ]
+          },
+          "EstoqueFornecedorLambdaVersionE4YSXQfFPkZIelfVVdEm6tHKmIdu8fxxffW2sDOR9lg": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "EstoqueFornecedorLambdaFunction"
+              },
+              "CodeSha256": "A5+WCRzXHJup4jzW8oOxw/AeWEUWAOmFM7lXSaHUaGo="
+            }
+          },
           "EstoqueProdutoLambdaFunction": {
             "Type": "AWS::Lambda::Function",
             "Properties": {
@@ -257,10 +338,10 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/autenticacao/dev/1535334248444-2018-08-27T01:44:08.444Z/autenticacao.zip"
+                "S3Key": "serverless/autenticacao/dev/1535421404774-2018-08-28T01:56:44.774Z/autenticacao.zip"
               },
               "FunctionName": "autenticacao-dev-estoqueProduto",
-              "Handler": "estoque/handler.estoqueProduto",
+              "Handler": "estoque/estoque.estoqueProduto",
               "MemorySize": 128,
               "Role": {
                 "Fn::GetAtt": [
@@ -285,14 +366,14 @@
               "IamRoleLambdaExecution"
             ]
           },
-          "EstoqueProdutoLambdaVersion842H6RoWqalTfvvsDwt7OjRR6NZApZFBdNBgFqxv6c": {
+          "EstoqueProdutoLambdaVersionHXxCZvudR5Lpg1nz4cbb8RIFfuO5sTrgn7UI6apGPg": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "EstoqueProdutoLambdaFunction"
               },
-              "CodeSha256": "z9ZMvsh0cAdROppOuNGhWWb/6S8hwxqvSOQmO1whuVQ="
+              "CodeSha256": "A5+WCRzXHJup4jzW8oOxw/AeWEUWAOmFM7lXSaHUaGo="
             }
           },
           "ProdutosLambdaFunction": {
@@ -302,7 +383,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/autenticacao/dev/1535334248444-2018-08-27T01:44:08.444Z/autenticacao.zip"
+                "S3Key": "serverless/autenticacao/dev/1535421404774-2018-08-28T01:56:44.774Z/autenticacao.zip"
               },
               "FunctionName": "autenticacao-dev-produtos",
               "Handler": "cadastros/produtos.listar",
@@ -330,14 +411,59 @@
               "IamRoleLambdaExecution"
             ]
           },
-          "ProdutosLambdaVersionwRdlcslyKcopxUVlj0J6Vsrv4fmbuVLmYNDht7c": {
+          "ProdutosLambdaVersionm4SL2caIab26zaIM3gI1x2ufjRb51sX2ybe1u5yH28g": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ProdutosLambdaFunction"
               },
-              "CodeSha256": "z9ZMvsh0cAdROppOuNGhWWb/6S8hwxqvSOQmO1whuVQ="
+              "CodeSha256": "A5+WCRzXHJup4jzW8oOxw/AeWEUWAOmFM7lXSaHUaGo="
+            }
+          },
+          "ProdutosBuscarLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/autenticacao/dev/1535421404774-2018-08-28T01:56:44.774Z/autenticacao.zip"
+              },
+              "FunctionName": "autenticacao-dev-produtosBuscar",
+              "Handler": "cadastros/produtos.buscar",
+              "MemorySize": 128,
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              },
+              "Runtime": "nodejs8.10",
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "USUARIOS_TABLE": "Usuarios-dev",
+                  "PRODUTOS_TABLE": "Produtos-dev",
+                  "AWS_DEPLOY_REGION": "us-east-2",
+                  "JWT_ENCRYPTION_CODE": "CE2784CB-EFF6-4AFB-A56F-5EF156E85F80",
+                  "SQLCONNECTIONSTRING": "Server=maria.cwjvvoewjryp.us-east-1.rds.amazonaws.com;Database=TCC_Estoque;User Id=userTCC;Password=mg54sasd442@;"
+                }
+              }
+            },
+            "DependsOn": [
+              "ProdutosBuscarLogGroup",
+              "IamRoleLambdaExecution"
+            ]
+          },
+          "ProdutosBuscarLambdaVersionE6wm4zOQjAyh9IiK3ncgCo0vy0Nl6ibhIgbBE9E": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "ProdutosBuscarLambdaFunction"
+              },
+              "CodeSha256": "A5+WCRzXHJup4jzW8oOxw/AeWEUWAOmFM7lXSaHUaGo="
             }
           },
           "ProdutoIncluirLambdaFunction": {
@@ -347,7 +473,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/autenticacao/dev/1535334248444-2018-08-27T01:44:08.444Z/autenticacao.zip"
+                "S3Key": "serverless/autenticacao/dev/1535421404774-2018-08-28T01:56:44.774Z/autenticacao.zip"
               },
               "FunctionName": "autenticacao-dev-produtoIncluir",
               "Handler": "cadastros/produtos.incluir",
@@ -375,14 +501,14 @@
               "IamRoleLambdaExecution"
             ]
           },
-          "ProdutoIncluirLambdaVersionDDcTkUP40Nex0Tdl0RPVE06e49BVZoHKsWM8r3T71w": {
+          "ProdutoIncluirLambdaVersionPpKn14UY42crsmd7D52UNyVi4hrJCxulb7p1lYt2Y": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ProdutoIncluirLambdaFunction"
               },
-              "CodeSha256": "z9ZMvsh0cAdROppOuNGhWWb/6S8hwxqvSOQmO1whuVQ="
+              "CodeSha256": "A5+WCRzXHJup4jzW8oOxw/AeWEUWAOmFM7lXSaHUaGo="
             }
           },
           "ApagarLambdaFunction": {
@@ -392,7 +518,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/autenticacao/dev/1535334248444-2018-08-27T01:44:08.444Z/autenticacao.zip"
+                "S3Key": "serverless/autenticacao/dev/1535421404774-2018-08-28T01:56:44.774Z/autenticacao.zip"
               },
               "FunctionName": "autenticacao-dev-apagar",
               "Handler": "cadastros/produtos.apagar",
@@ -420,14 +546,14 @@
               "IamRoleLambdaExecution"
             ]
           },
-          "ApagarLambdaVersionOnmgoZjCXl2Z93vqZZ3g5kqCCCM5QDU9Zv5ptce6McI": {
+          "ApagarLambdaVersionfFu1mPywfgiK6tLykEafcm5V5zoGfPaF6oMlkrn9chA": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ApagarLambdaFunction"
               },
-              "CodeSha256": "z9ZMvsh0cAdROppOuNGhWWb/6S8hwxqvSOQmO1whuVQ="
+              "CodeSha256": "A5+WCRzXHJup4jzW8oOxw/AeWEUWAOmFM7lXSaHUaGo="
             }
           },
           "AlterarLambdaFunction": {
@@ -437,7 +563,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/autenticacao/dev/1535334248444-2018-08-27T01:44:08.444Z/autenticacao.zip"
+                "S3Key": "serverless/autenticacao/dev/1535421404774-2018-08-28T01:56:44.774Z/autenticacao.zip"
               },
               "FunctionName": "autenticacao-dev-alterar",
               "Handler": "cadastros/produtos.alterar",
@@ -465,14 +591,14 @@
               "IamRoleLambdaExecution"
             ]
           },
-          "AlterarLambdaVersionp4FnAUfgXu0fbZ8kEK9JJTD1jZIV8wIeGxBAE0oGg": {
+          "AlterarLambdaVersionwAMrnwg0e1e9eX8EC9IeZFVh49p7VzwB4icITOk": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "AlterarLambdaFunction"
               },
-              "CodeSha256": "z9ZMvsh0cAdROppOuNGhWWb/6S8hwxqvSOQmO1whuVQ="
+              "CodeSha256": "A5+WCRzXHJup4jzW8oOxw/AeWEUWAOmFM7lXSaHUaGo="
             }
           },
           "LoginLambdaFunction": {
@@ -482,7 +608,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/autenticacao/dev/1535334248444-2018-08-27T01:44:08.444Z/autenticacao.zip"
+                "S3Key": "serverless/autenticacao/dev/1535421404774-2018-08-28T01:56:44.774Z/autenticacao.zip"
               },
               "FunctionName": "autenticacao-dev-login",
               "Handler": "autenticacao/handler.authenticate",
@@ -510,14 +636,14 @@
               "IamRoleLambdaExecution"
             ]
           },
-          "LoginLambdaVersionoRbkZPlK1FNcAKVdNcbBMiFa3o7Q3jQMmf1XTziQtTs": {
+          "LoginLambdaVersionkcEFVlEQBEKga2MVGHwEOr9WKDxjpxMmVNG0q61RIcU": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "LoginLambdaFunction"
               },
-              "CodeSha256": "z9ZMvsh0cAdROppOuNGhWWb/6S8hwxqvSOQmO1whuVQ="
+              "CodeSha256": "A5+WCRzXHJup4jzW8oOxw/AeWEUWAOmFM7lXSaHUaGo="
             }
           },
           "CreateUserLambdaFunction": {
@@ -527,7 +653,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/autenticacao/dev/1535334248444-2018-08-27T01:44:08.444Z/autenticacao.zip"
+                "S3Key": "serverless/autenticacao/dev/1535421404774-2018-08-28T01:56:44.774Z/autenticacao.zip"
               },
               "FunctionName": "autenticacao-dev-createUser",
               "Handler": "autenticacao/handler.createUser",
@@ -555,14 +681,59 @@
               "IamRoleLambdaExecution"
             ]
           },
-          "CreateUserLambdaVersionRCoSJwTIszVoEcuPzo7MQIjLaWHTUMrkKhGh65jsixE": {
+          "CreateUserLambdaVersionEc9cMUq1YY8xJr5vwbLRWxAdRuVcKYu2pVe8zt0iPE": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "CreateUserLambdaFunction"
               },
-              "CodeSha256": "z9ZMvsh0cAdROppOuNGhWWb/6S8hwxqvSOQmO1whuVQ="
+              "CodeSha256": "A5+WCRzXHJup4jzW8oOxw/AeWEUWAOmFM7lXSaHUaGo="
+            }
+          },
+          "ListarUsuariosLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/autenticacao/dev/1535421404774-2018-08-28T01:56:44.774Z/autenticacao.zip"
+              },
+              "FunctionName": "autenticacao-dev-listarUsuarios",
+              "Handler": "autenticacao/handler.listarUsuarios",
+              "MemorySize": 128,
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              },
+              "Runtime": "nodejs8.10",
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "USUARIOS_TABLE": "Usuarios-dev",
+                  "PRODUTOS_TABLE": "Produtos-dev",
+                  "AWS_DEPLOY_REGION": "us-east-2",
+                  "JWT_ENCRYPTION_CODE": "CE2784CB-EFF6-4AFB-A56F-5EF156E85F80",
+                  "SQLCONNECTIONSTRING": "Server=maria.cwjvvoewjryp.us-east-1.rds.amazonaws.com;Database=TCC_Estoque;User Id=userTCC;Password=mg54sasd442@;"
+                }
+              }
+            },
+            "DependsOn": [
+              "ListarUsuariosLogGroup",
+              "IamRoleLambdaExecution"
+            ]
+          },
+          "ListarUsuariosLambdaVersionHvtzlS6ue0kqczMugaxLF8ZkBF2icxDzHjkhwjYbo": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "ListarUsuariosLambdaFunction"
+              },
+              "CodeSha256": "A5+WCRzXHJup4jzW8oOxw/AeWEUWAOmFM7lXSaHUaGo="
             }
           },
           "DeleteUserLambdaFunction": {
@@ -572,7 +743,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/autenticacao/dev/1535334248444-2018-08-27T01:44:08.444Z/autenticacao.zip"
+                "S3Key": "serverless/autenticacao/dev/1535421404774-2018-08-28T01:56:44.774Z/autenticacao.zip"
               },
               "FunctionName": "autenticacao-dev-deleteUser",
               "Handler": "autenticacao/handler.deleteUser",
@@ -600,14 +771,14 @@
               "IamRoleLambdaExecution"
             ]
           },
-          "DeleteUserLambdaVersionxgiKMqdaicuJT0IGkNRs832Lw72cRUzS2AZ56piw": {
+          "DeleteUserLambdaVersionNEfvTINxzbdVKpF5f8JafWV3Qw1ubhvjbqDtJ58d0": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "DeleteUserLambdaFunction"
               },
-              "CodeSha256": "z9ZMvsh0cAdROppOuNGhWWb/6S8hwxqvSOQmO1whuVQ="
+              "CodeSha256": "A5+WCRzXHJup4jzW8oOxw/AeWEUWAOmFM7lXSaHUaGo="
             }
           },
           "ApiGatewayRestApi": {
@@ -618,6 +789,45 @@
                 "Types": [
                   "EDGE"
                 ]
+              }
+            }
+          },
+          "ApiGatewayResourceFornecedores": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Fn::GetAtt": [
+                  "ApiGatewayRestApi",
+                  "RootResourceId"
+                ]
+              },
+              "PathPart": "fornecedores",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayResourceFornecedoresIdVar": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Ref": "ApiGatewayResourceFornecedores"
+              },
+              "PathPart": "{id}",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayResourceFornecedoresIdVarEstoque": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Ref": "ApiGatewayResourceFornecedoresIdVar"
+              },
+              "PathPart": "estoque",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
               }
             }
           },
@@ -685,6 +895,65 @@
                 ]
               },
               "PathPart": "users",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayResourceUsersRoleVar": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Ref": "ApiGatewayResourceUsers"
+              },
+              "PathPart": "{role}",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayMethodFornecedoresIdVarEstoqueOptions": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "AuthorizationType": "NONE",
+              "HttpMethod": "OPTIONS",
+              "MethodResponses": [
+                {
+                  "StatusCode": "200",
+                  "ResponseParameters": {
+                    "method.response.header.Access-Control-Allow-Origin": true,
+                    "method.response.header.Access-Control-Allow-Headers": true,
+                    "method.response.header.Access-Control-Allow-Methods": true,
+                    "method.response.header.Access-Control-Allow-Credentials": true
+                  },
+                  "ResponseModels": {}
+                }
+              ],
+              "RequestParameters": {},
+              "Integration": {
+                "Type": "MOCK",
+                "RequestTemplates": {
+                  "application/json": "{statusCode:200}"
+                },
+                "ContentHandling": "CONVERT_TO_TEXT",
+                "IntegrationResponses": [
+                  {
+                    "StatusCode": "200",
+                    "ResponseParameters": {
+                      "method.response.header.Access-Control-Allow-Origin": "'*'",
+                      "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                      "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,POST'",
+                      "method.response.header.Access-Control-Allow-Credentials": "'false'"
+                    },
+                    "ResponseTemplates": {
+                      "application/json": ""
+                    }
+                  }
+                ]
+              },
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceFornecedoresIdVarEstoque"
+              },
               "RestApiId": {
                 "Ref": "ApiGatewayRestApi"
               }
@@ -767,7 +1036,7 @@
                     "ResponseParameters": {
                       "method.response.header.Access-Control-Allow-Origin": "'*'",
                       "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
-                      "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,PUT,DELETE,POST,GET'",
+                      "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,DELETE,POST,GET'",
                       "method.response.header.Access-Control-Allow-Credentials": "'false'"
                     },
                     "ResponseTemplates": {
@@ -778,6 +1047,53 @@
               },
               "ResourceId": {
                 "Ref": "ApiGatewayResourceProdutos"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayMethodProdutosIdVarOptions": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "AuthorizationType": "NONE",
+              "HttpMethod": "OPTIONS",
+              "MethodResponses": [
+                {
+                  "StatusCode": "200",
+                  "ResponseParameters": {
+                    "method.response.header.Access-Control-Allow-Origin": true,
+                    "method.response.header.Access-Control-Allow-Headers": true,
+                    "method.response.header.Access-Control-Allow-Methods": true,
+                    "method.response.header.Access-Control-Allow-Credentials": true
+                  },
+                  "ResponseModels": {}
+                }
+              ],
+              "RequestParameters": {},
+              "Integration": {
+                "Type": "MOCK",
+                "RequestTemplates": {
+                  "application/json": "{statusCode:200}"
+                },
+                "ContentHandling": "CONVERT_TO_TEXT",
+                "IntegrationResponses": [
+                  {
+                    "StatusCode": "200",
+                    "ResponseParameters": {
+                      "method.response.header.Access-Control-Allow-Origin": "'*'",
+                      "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                      "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,PUT,GET'",
+                      "method.response.header.Access-Control-Allow-Credentials": "'false'"
+                    },
+                    "ResponseTemplates": {
+                      "application/json": ""
+                    }
+                  }
+                ]
+              },
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceProdutosIdVar"
               },
               "RestApiId": {
                 "Ref": "ApiGatewayRestApi"
@@ -878,6 +1194,96 @@
               }
             }
           },
+          "ApiGatewayMethodUsersRoleVarOptions": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "AuthorizationType": "NONE",
+              "HttpMethod": "OPTIONS",
+              "MethodResponses": [
+                {
+                  "StatusCode": "200",
+                  "ResponseParameters": {
+                    "method.response.header.Access-Control-Allow-Origin": true,
+                    "method.response.header.Access-Control-Allow-Headers": true,
+                    "method.response.header.Access-Control-Allow-Methods": true,
+                    "method.response.header.Access-Control-Allow-Credentials": true
+                  },
+                  "ResponseModels": {}
+                }
+              ],
+              "RequestParameters": {},
+              "Integration": {
+                "Type": "MOCK",
+                "RequestTemplates": {
+                  "application/json": "{statusCode:200}"
+                },
+                "ContentHandling": "CONVERT_TO_TEXT",
+                "IntegrationResponses": [
+                  {
+                    "StatusCode": "200",
+                    "ResponseParameters": {
+                      "method.response.header.Access-Control-Allow-Origin": "'*'",
+                      "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                      "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET'",
+                      "method.response.header.Access-Control-Allow-Credentials": "'false'"
+                    },
+                    "ResponseTemplates": {
+                      "application/json": ""
+                    }
+                  }
+                ]
+              },
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceUsersRoleVar"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayMethodFornecedoresIdVarEstoquePost": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "POST",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceFornecedoresIdVarEstoque"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": false,
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "EstoqueFornecedorLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            }
+          },
           "ApiGatewayMethodProdutosIdVarEstoqueGet": {
             "Type": "AWS::ApiGateway::Method",
             "Properties": {
@@ -953,6 +1359,49 @@
                       {
                         "Fn::GetAtt": [
                           "ProdutosLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            }
+          },
+          "ApiGatewayMethodProdutosIdVarGet": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "GET",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceProdutosIdVar"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": false,
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "ProdutosBuscarLambdaFunction",
                           "Arn"
                         ]
                       },
@@ -1050,13 +1499,13 @@
               "MethodResponses": []
             }
           },
-          "ApiGatewayMethodProdutosPut": {
+          "ApiGatewayMethodProdutosIdVarPut": {
             "Type": "AWS::ApiGateway::Method",
             "Properties": {
               "HttpMethod": "PUT",
               "RequestParameters": {},
               "ResourceId": {
-                "Ref": "ApiGatewayResourceProdutos"
+                "Ref": "ApiGatewayResourceProdutosIdVar"
               },
               "RestApiId": {
                 "Ref": "ApiGatewayRestApi"
@@ -1179,6 +1628,49 @@
               "MethodResponses": []
             }
           },
+          "ApiGatewayMethodUsersRoleVarGet": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "GET",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceUsersRoleVar"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": false,
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "ListarUsuariosLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            }
+          },
           "ApiGatewayMethodUsersDelete": {
             "Type": "AWS::ApiGateway::Method",
             "Properties": {
@@ -1222,7 +1714,7 @@
               "MethodResponses": []
             }
           },
-          "ApiGatewayDeployment1535334248741": {
+          "ApiGatewayDeployment1535421405183": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -1231,15 +1723,65 @@
               "StageName": "dev"
             },
             "DependsOn": [
+              "ApiGatewayMethodFornecedoresIdVarEstoquePost",
               "ApiGatewayMethodProdutosIdVarEstoqueGet",
               "ApiGatewayMethodProdutosGet",
+              "ApiGatewayMethodProdutosIdVarGet",
               "ApiGatewayMethodProdutosPost",
               "ApiGatewayMethodProdutosDelete",
-              "ApiGatewayMethodProdutosPut",
+              "ApiGatewayMethodProdutosIdVarPut",
               "ApiGatewayMethodLoginPost",
               "ApiGatewayMethodUsersPost",
+              "ApiGatewayMethodUsersRoleVarGet",
               "ApiGatewayMethodUsersDelete"
             ]
+          },
+          "EstoqueFornecedorLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "EstoqueFornecedorLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "apigateway.",
+                    {
+                      "Ref": "AWS::URLSuffix"
+                    }
+                  ]
+                ]
+              },
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
           },
           "EstoqueProdutoLambdaPermissionApiGateway": {
             "Type": "AWS::Lambda::Permission",
@@ -1294,6 +1836,53 @@
               "FunctionName": {
                 "Fn::GetAtt": [
                   "ProdutosLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "apigateway.",
+                    {
+                      "Ref": "AWS::URLSuffix"
+                    }
+                  ]
+                ]
+              },
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "ProdutosBuscarLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "ProdutosBuscarLambdaFunction",
                   "Arn"
                 ]
               },
@@ -1570,6 +2159,53 @@
               }
             }
           },
+          "ListarUsuariosLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "ListarUsuariosLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "apigateway.",
+                    {
+                      "Ref": "AWS::URLSuffix"
+                    }
+                  ]
+                ]
+              },
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          },
           "DeleteUserLambdaPermissionApiGateway": {
             "Type": "AWS::Lambda::Permission",
             "Properties": {
@@ -1628,6 +2264,10 @@
                 {
                   "AttributeName": "username",
                   "AttributeType": "S"
+                },
+                {
+                  "AttributeName": "role",
+                  "AttributeType": "S"
                 }
               ],
               "KeySchema": [
@@ -1652,6 +2292,25 @@
                     "ReadCapacityUnits": 1,
                     "WriteCapacityUnits": 1
                   }
+                },
+                {
+                  "IndexName": "userrole-index",
+                  "KeySchema": [
+                    {
+                      "AttributeName": "role",
+                      "KeyType": "HASH"
+                    }
+                  ],
+                  "Projection": {
+                    "NonKeyAttributes": [
+                      "nome"
+                    ],
+                    "ProjectionType": "INCLUDE"
+                  },
+                  "ProvisionedThroughput": {
+                    "ReadCapacityUnits": 1,
+                    "WriteCapacityUnits": 1
+                  }
                 }
               ],
               "ProvisionedThroughput": {
@@ -1668,34 +2327,12 @@
                 {
                   "AttributeName": "id",
                   "AttributeType": "S"
-                },
-                {
-                  "AttributeName": "codigo",
-                  "AttributeType": "S"
                 }
               ],
               "KeySchema": [
                 {
                   "AttributeName": "id",
                   "KeyType": "HASH"
-                }
-              ],
-              "GlobalSecondaryIndexes": [
-                {
-                  "IndexName": "codigo-index",
-                  "KeySchema": [
-                    {
-                      "AttributeName": "codigo",
-                      "KeyType": "HASH"
-                    }
-                  ],
-                  "Projection": {
-                    "ProjectionType": "KEYS_ONLY"
-                  },
-                  "ProvisionedThroughput": {
-                    "ReadCapacityUnits": 1,
-                    "WriteCapacityUnits": 1
-                  }
                 }
               ],
               "ProvisionedThroughput": {
@@ -1712,52 +2349,70 @@
               "Ref": "ServerlessDeploymentBucket"
             }
           },
+          "EstoqueFornecedorLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "EstoqueFornecedorLambdaVersionE4YSXQfFPkZIelfVVdEm6tHKmIdu8fxxffW2sDOR9lg"
+            }
+          },
           "EstoqueProdutoLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "EstoqueProdutoLambdaVersion842H6RoWqalTfvvsDwt7OjRR6NZApZFBdNBgFqxv6c"
+              "Ref": "EstoqueProdutoLambdaVersionHXxCZvudR5Lpg1nz4cbb8RIFfuO5sTrgn7UI6apGPg"
             }
           },
           "ProdutosLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ProdutosLambdaVersionwRdlcslyKcopxUVlj0J6Vsrv4fmbuVLmYNDht7c"
+              "Ref": "ProdutosLambdaVersionm4SL2caIab26zaIM3gI1x2ufjRb51sX2ybe1u5yH28g"
+            }
+          },
+          "ProdutosBuscarLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "ProdutosBuscarLambdaVersionE6wm4zOQjAyh9IiK3ncgCo0vy0Nl6ibhIgbBE9E"
             }
           },
           "ProdutoIncluirLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ProdutoIncluirLambdaVersionDDcTkUP40Nex0Tdl0RPVE06e49BVZoHKsWM8r3T71w"
+              "Ref": "ProdutoIncluirLambdaVersionPpKn14UY42crsmd7D52UNyVi4hrJCxulb7p1lYt2Y"
             }
           },
           "ApagarLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ApagarLambdaVersionOnmgoZjCXl2Z93vqZZ3g5kqCCCM5QDU9Zv5ptce6McI"
+              "Ref": "ApagarLambdaVersionfFu1mPywfgiK6tLykEafcm5V5zoGfPaF6oMlkrn9chA"
             }
           },
           "AlterarLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "AlterarLambdaVersionp4FnAUfgXu0fbZ8kEK9JJTD1jZIV8wIeGxBAE0oGg"
+              "Ref": "AlterarLambdaVersionwAMrnwg0e1e9eX8EC9IeZFVh49p7VzwB4icITOk"
             }
           },
           "LoginLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "LoginLambdaVersionoRbkZPlK1FNcAKVdNcbBMiFa3o7Q3jQMmf1XTziQtTs"
+              "Ref": "LoginLambdaVersionkcEFVlEQBEKga2MVGHwEOr9WKDxjpxMmVNG0q61RIcU"
             }
           },
           "CreateUserLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "CreateUserLambdaVersionRCoSJwTIszVoEcuPzo7MQIjLaWHTUMrkKhGh65jsixE"
+              "Ref": "CreateUserLambdaVersionEc9cMUq1YY8xJr5vwbLRWxAdRuVcKYu2pVe8zt0iPE"
+            }
+          },
+          "ListarUsuariosLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "ListarUsuariosLambdaVersionHvtzlS6ue0kqczMugaxLF8ZkBF2icxDzHjkhwjYbo"
             }
           },
           "DeleteUserLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "DeleteUserLambdaVersionxgiKMqdaicuJT0IGkNRs832Lw72cRUzS2AZ56piw"
+              "Ref": "DeleteUserLambdaVersionNEfvTINxzbdVKpF5f8JafWV3Qw1ubhvjbqDtJ58d0"
             }
           },
           "ServiceEndpoint": {
@@ -1805,8 +2460,47 @@
     },
     "pluginsData": {},
     "functions": {
+      "estoqueFornecedor": {
+        "handler": "estoque/estoque.estoqueFornecedor",
+        "memorySize": 128,
+        "events": [
+          {
+            "http": {
+              "method": "post",
+              "path": "fornecedores/{id}/estoque",
+              "private": false,
+              "cors": {
+                "origins": [
+                  "*"
+                ],
+                "origin": "*",
+                "methods": [
+                  "OPTIONS",
+                  "POST"
+                ],
+                "headers": [
+                  "Content-Type",
+                  "X-Amz-Date",
+                  "Authorization",
+                  "X-Api-Key",
+                  "X-Amz-Security-Token",
+                  "X-Amz-User-Agent"
+                ],
+                "allowCredentials": false
+              },
+              "integration": "AWS_PROXY"
+            }
+          }
+        ],
+        "name": "autenticacao-dev-estoqueFornecedor",
+        "package": {},
+        "memory": 128,
+        "timeout": 6,
+        "runtime": "nodejs8.10",
+        "vpc": {}
+      },
       "estoqueProduto": {
-        "handler": "estoque/handler.estoqueProduto",
+        "handler": "estoque/estoque.estoqueProduto",
         "memorySize": 128,
         "events": [
           {
@@ -1877,6 +2571,45 @@
           }
         ],
         "name": "autenticacao-dev-produtos",
+        "package": {},
+        "memory": 128,
+        "timeout": 6,
+        "runtime": "nodejs8.10",
+        "vpc": {}
+      },
+      "produtosBuscar": {
+        "handler": "cadastros/produtos.buscar",
+        "memorySize": 128,
+        "events": [
+          {
+            "http": {
+              "method": "get",
+              "path": "produtos/{id}",
+              "private": false,
+              "cors": {
+                "origins": [
+                  "*"
+                ],
+                "origin": "*",
+                "methods": [
+                  "OPTIONS",
+                  "GET"
+                ],
+                "headers": [
+                  "Content-Type",
+                  "X-Amz-Date",
+                  "Authorization",
+                  "X-Api-Key",
+                  "X-Amz-Security-Token",
+                  "X-Amz-User-Agent"
+                ],
+                "allowCredentials": false
+              },
+              "integration": "AWS_PROXY"
+            }
+          }
+        ],
+        "name": "autenticacao-dev-produtosBuscar",
         "package": {},
         "memory": 128,
         "timeout": 6,
@@ -1968,7 +2701,7 @@
           {
             "http": {
               "method": "put",
-              "path": "produtos",
+              "path": "produtos/{id}",
               "private": false,
               "cors": {
                 "origins": [
@@ -2078,6 +2811,45 @@
         "runtime": "nodejs8.10",
         "vpc": {}
       },
+      "listarUsuarios": {
+        "handler": "autenticacao/handler.listarUsuarios",
+        "memorySize": 128,
+        "events": [
+          {
+            "http": {
+              "method": "get",
+              "path": "users/{role}",
+              "private": false,
+              "cors": {
+                "origins": [
+                  "*"
+                ],
+                "origin": "*",
+                "methods": [
+                  "OPTIONS",
+                  "GET"
+                ],
+                "headers": [
+                  "Content-Type",
+                  "X-Amz-Date",
+                  "Authorization",
+                  "X-Api-Key",
+                  "X-Amz-Security-Token",
+                  "X-Amz-User-Agent"
+                ],
+                "allowCredentials": false
+              },
+              "integration": "AWS_PROXY"
+            }
+          }
+        ],
+        "name": "autenticacao-dev-listarUsuarios",
+        "package": {},
+        "memory": 128,
+        "timeout": 6,
+        "runtime": "nodejs8.10",
+        "vpc": {}
+      },
       "deleteUser": {
         "handler": "autenticacao/handler.deleteUser",
         "memorySize": 128,
@@ -2131,6 +2903,10 @@
               {
                 "AttributeName": "username",
                 "AttributeType": "S"
+              },
+              {
+                "AttributeName": "role",
+                "AttributeType": "S"
               }
             ],
             "KeySchema": [
@@ -2155,6 +2931,25 @@
                   "ReadCapacityUnits": 1,
                   "WriteCapacityUnits": 1
                 }
+              },
+              {
+                "IndexName": "userrole-index",
+                "KeySchema": [
+                  {
+                    "AttributeName": "role",
+                    "KeyType": "HASH"
+                  }
+                ],
+                "Projection": {
+                  "NonKeyAttributes": [
+                    "nome"
+                  ],
+                  "ProjectionType": "INCLUDE"
+                },
+                "ProvisionedThroughput": {
+                  "ReadCapacityUnits": 1,
+                  "WriteCapacityUnits": 1
+                }
               }
             ],
             "ProvisionedThroughput": {
@@ -2171,34 +2966,12 @@
               {
                 "AttributeName": "id",
                 "AttributeType": "S"
-              },
-              {
-                "AttributeName": "codigo",
-                "AttributeType": "S"
               }
             ],
             "KeySchema": [
               {
                 "AttributeName": "id",
                 "KeyType": "HASH"
-              }
-            ],
-            "GlobalSecondaryIndexes": [
-              {
-                "IndexName": "codigo-index",
-                "KeySchema": [
-                  {
-                    "AttributeName": "codigo",
-                    "KeyType": "HASH"
-                  }
-                ],
-                "Projection": {
-                  "ProjectionType": "KEYS_ONLY"
-                },
-                "ProvisionedThroughput": {
-                  "ReadCapacityUnits": 1,
-                  "WriteCapacityUnits": 1
-                }
               }
             ],
             "ProvisionedThroughput": {
@@ -2214,7 +2987,7 @@
     "artifact": "/Users/felipefleury/TCC/projeto/modulos/.serverless/autenticacao.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/autenticacao/dev/1535334248444-2018-08-27T01:44:08.444Z",
+    "artifactDirectoryName": "serverless/autenticacao/dev/1535421404774-2018-08-28T01:56:44.774Z",
     "artifact": "autenticacao.zip"
   }
 }

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from "react-redux";
 import ListItem from '../../components/ListItem/listItem';
-import { getData, buscarDetalhes } from "./produtos-actions";
+import { getData } from "./produtos-actions";
 
 
 class ListaProdutos extends React.Component {
@@ -20,8 +20,8 @@ class ListaProdutos extends React.Component {
   }
   
   clickItem(id) {
-    this.props.buscarDetalhes(id);
-    //this.props.history.push(`${process.env.PUBLIC_URL}/produtos` + "/" + id);
+    //this.props.buscarDetalhes(id);
+    this.props.history.push(`${process.env.PUBLIC_URL}/produtos` + "/" + id);
   }
 
   render() {
@@ -55,7 +55,7 @@ const mapStateToProps = (state) => (
 );
 
 const actionCreators = {
-  getData, buscarDetalhes
+  getData
 }
 
 export default connect(mapStateToProps, actionCreators)(ListaProdutos);

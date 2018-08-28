@@ -111,9 +111,48 @@ const parseUser = (value) => {
 
   //Adiciona campos automaticos (Data de criacao e alteracao).
   const timestamp = (new Date()).toISOString();
-  return {..._parsed, id: uuid.v1(), submittedAt: timestamp, updatedAt: timestamp}
+  return {..._parsed, submittedAt: timestamp, updatedAt: timestamp}
 
 }
+
+
+/*****************************************************************
+ Funcao responsavel por listar os usuarios com o papel selecionado
+ Apenas a listagem de fornecedores é liberada
+ endpoint: POST /fornecedor/{id}/estoque
+ visibilidade: <admin> ou publico caso o papel seja fornecedor
+******************************************************************/
+module.exports.listarUsuarios = async  (event, context) => {
+
+  let role = event.pathParameters.role; 
+
+  const params = {
+    TableName: USUARIOS_TABLE,
+    IndexName: "userrole-index",
+    FilterExpression:'#userrole = :filterrole',
+    ExpressionAttributeNames: { "#userrole" : "role"},
+    ExpressionAttributeValues:{ ":filterrole" : role },
+    ProjectionExpression: "id, nome",
+    ScanIndexForward: false
+  };
+  return await new Promise((resolve, reject) => {
+    dynamoDb.scan(params, (error, data) => {
+      if (error) {
+        console.log(`erro ao listar ERROR=${error.stack}`);
+          resolve({
+            statusCode: 400//,
+            //body: JSON.stringify(`Could not create user: ${error.stack}`)
+          });
+      } else {
+        resolve({ statusCode: 200, headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Credentials': true, 
+        },  body: JSON.stringify(data.Items) });
+      }
+    });
+  });
+}
+
 
 module.exports.createUser = async (event, context) => {
   
@@ -139,9 +178,13 @@ module.exports.createUser = async (event, context) => {
     };
   }
 
+  // Cria um id para o usuario
+  if (!user.id)
+    user.id = uuid.v1();
+  
   //Adiciona campos automaticos (Data de criacao e alteracao).
   const timestamp = (new Date()).toISOString();
-  user = {...user, id: uuid.v1(), submittedAt: timestamp, updatedAt: timestamp}
+  user = {...user, submittedAt: timestamp, updatedAt: timestamp}
 
   // Verifica se ja existe um usuario com esse login (username)
   var usersWithSameLogin = await getUserByLogin(user.username);
@@ -173,6 +216,11 @@ module.exports.createUser = async (event, context) => {
   
 };
 
+
+
+
+
+
 const validateUser = (value) => {
   if (typeof value.username !== 'string' || typeof value.password !== 'string' || typeof value.nome !== 'string' || typeof value.role !== 'string') {
     return false;
@@ -187,12 +235,12 @@ const getUserByLogin = (username) => {
   const params = {
     TableName: USUARIOS_TABLE,
     IndexName: "username-index",
-    KeyConditionExpression: 'username = :username',
+    //KeyConditionExpression: 'username = :username',
     //ExpressionAttributeValues: {
     //    ":genre": "Rock"
     //}
     //,    ProjectionExpression:'username', // remove this string if you want to get not only 'name'
-    //FilterExpression:'username = :username',
+    FilterExpression:'username = :username',
     ExpressionAttributeValues:{ ":username" : username },
     //ProjectionExpression: "id, username, password",
     ScanIndexForward: false

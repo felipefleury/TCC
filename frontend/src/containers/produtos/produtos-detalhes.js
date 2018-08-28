@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from "react-redux";
-
-//import { carregar } from "./produtos-actions";
+import currencyFormatter from 'currency-formatter';
+import { carregarDadosProduto as carregar } from "./produtos-actions";
 
 
 class detalhesProdutos extends React.Component {
@@ -11,39 +11,53 @@ class detalhesProdutos extends React.Component {
   }
 
   componentDidMount() {
-    const { match: { params } } = this.props;  
-    this.loadData(params.id);
+      const { match: { params } } = this.props;  
+      this.loadData(params.id);
   }
 
   loadData(id) {
-    //this.props.carregar(id);
+    this.props.carregar(id);
   }
   
 
   render() {
-    let item = this.props.entities.produtos[this.props.id];
-    let disponibilidade = this.props.estoque.map((value, index) => {
-
-        console.log(value);
+    let item = this.props.current.item;
+    if (!item) return null;
+    let quantidade = 0;
+    let disponibilidade = item.estoque.map((value, index) => {
+        quantidade += value.quantidade;
         return  <li>
                     {value.quantidade} - {value.idFornecedor}
                 </li>
-
-        
     });
+    
     return (
   <div className="row">
         <div className="col s12 m4">
             <div className="icon-block">
-            <h2 className="center brown-text"><img src={item.fotoUrl} /></h2>
-            <h5 className="center">{item.nome}</h5>
-
-            <p className="light">{item.descricao}</p>
-            <a href={`${process.env.PUBLIC_URL}/produtos/${item.id}`} id="download-button" className="btn-large waves-effect waves-light teal lighten-1">Ver detalhes</a>
+            <h2 className="center brown-text"><img src={item.fotoUrl} width={100} /></h2>
             </div>
-            <ul>{disponibilidade}</ul>
-            {(this.props.estoque.length > 0 ? <div>Comprar</div> : undefined)}
         </div>
+        <div className="col s12 m4">
+            <div className="icon-block">
+                <h5 className="center">{item.nome}</h5>
+                <p className="light">{item.descricao}</p>
+            </div>
+        </div>   
+        <div className="col s12 m4">
+          <div>
+            <div className="icon-block yellow">
+              <h4 className="center">Por {currencyFormatter.format(item.preco, { locale: 'pt-br' })}</h4>
+            </div>
+            <div className="icon-block">
+              <i class="material-icons">local_shipping</i>
+              <p className="light">Disponibilidade : {quantidade} un.</p>
+              </div>
+              <ul>{disponibilidade}</ul>
+              {(item.estoque.length > 0 ? <div>Comprar</div> : undefined)}
+          </div>
+          
+        </div>                 
   </div>
 )}
 }
@@ -56,12 +70,12 @@ const mapStateToProps = (state) => (
       result: state.produtos.result,
       loading: state.app.loading,
       id: state.produtos.current.id,
-      estoque: state.produtos.current.estoque
+      current: state.produtos.current
   }
 );
 
 const actionCreators = {
-  //carregar
+  carregar
 }
 
 export default connect(mapStateToProps, actionCreators)(detalhesProdutos);

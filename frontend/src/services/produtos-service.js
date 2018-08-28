@@ -3,7 +3,7 @@ import { normalize, schema } from 'normalizr';
 const produto = new schema.Entity('produtos', {}, {idAttribute: 'id'});
 const mySchema = [ produto ];
 
-export default class CategoriaService {
+export default class ProdutoService {
 
   async listar() {
     const response = await axios.get('produtos');

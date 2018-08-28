@@ -1,3 +1,10 @@
+/**************************************************************
+ Autor: Luis Felipe Assumpção Fleury            Data:26/08/2018
+ Modulo de Cadastros -                       Tabela de Produtos
+ Responsavel pelo cadastro dos produtos 
+***************************************************************/
+
+
 'use strict';
 const AWS = require('aws-sdk');
 const jwt = require("jsonwebtoken");
@@ -11,7 +18,11 @@ const dynamoDb = new AWS.DynamoDB.DocumentClient({
     region: AWS_DEPLOY_REGION
 });
 
-
+/************************************************************
+ Funcao responsavel por listar todos os produtos
+ endpoint: GET /produtos
+ visibilidade: pública
+*************************************************************/
 module.exports.listar = async (event, context) => {
   console.log(event);
 
@@ -36,6 +47,37 @@ module.exports.listar = async (event, context) => {
   });
 }
 
+/************************************************************
+ Funcao responsavel por trazer os dados de um produto
+ endpoint: GET /produtos/{id}
+ visibilidade: pública
+*************************************************************/
+module.exports.buscar = async (event, context) => {
+  console.log(event);
+  let idProduto = event.pathParameters.id;
+  const params = {
+    TableName: TABLE,
+    Key: { id: idProduto}
+  };
+  return await new Promise((resolve, reject) => {
+    dynamoDb.get(params, (error, data) => {
+      if (error) {
+        console.log(`erro ao listar ERROR=${error.stack}`);
+          resolve({
+            statusCode: 400//,
+            //body: JSON.stringify(`Could not create user: ${error.stack}`)
+          });
+      } else {
+        resolve({ statusCode: 200, headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Credentials': true, 
+        },  body: JSON.stringify(data.Item) });
+      }
+    });
+  });
+}
+
+
 const getCorsHeaders = () => {
   return {
     'Access-Control-Allow-Origin': '*',
@@ -44,6 +86,11 @@ const getCorsHeaders = () => {
 }
 
 
+/************************************************************
+ Funcao responsavel por apagar um produto
+ endpoint: DELETE /produtos/{id}
+ visibilidade: <admin> e <cadastro>
+*************************************************************/
 module.exports.apagar = async (event, context) => {
 
   let _parsed;// = value;
@@ -79,6 +126,11 @@ module.exports.apagar = async (event, context) => {
   
 }
 
+/************************************************************
+ Funcao responsavel por incluir um produto
+ endpoint: POST /produtos
+ visibilidade: <admin> e <cadastro>
+*************************************************************/
 module.exports.incluir = async (event, context) => {
 
   //Carrega produto enviado via POST
@@ -107,16 +159,6 @@ module.exports.incluir = async (event, context) => {
   const timestamp = (new Date()).toISOString();
   produto = {...produto, id: uuid.v1(), submittedAt: timestamp, updatedAt: timestamp}
 
-
-  // Verifica se ja existe um produto com esse codigo
-  var produtoRepetido = await getProdutoByCodigo(produto.codigo);
-  if(produtoRepetido.Count > 0) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({error:"Codigo do produto já existe!"})
-    };
-  } 
-
   const params = {
     TableName: TABLE,
     Item: produto
@@ -137,9 +179,15 @@ module.exports.incluir = async (event, context) => {
 }
 
 
+/************************************************************
+ Funcao responsavel por alterar um produto
+ endpoint: PUT /produtos/{id}
+ visibilidade: <admin> e <cadastro>
+*************************************************************/
 module.exports.alterar = async (event, context) => {
 
-  //Carrega produto enviado via POST
+  //Carrega produto enviado via PUT
+ let idProduto = event.pathParameters.id; 
  let produto = null;  
  let _parsed;
  try {
@@ -152,6 +200,16 @@ module.exports.alterar = async (event, context) => {
    };
  }
 
+ // Verifica id informado. Nao pode passar um id por parametro e outro no corpo
+ if(produto.id === 'string' && produto.id != idProduto) {
+  console.error("id incoerente");
+  return {
+    statusCode: 400,
+    body: JSON.stringify({error:"id invalido!"})
+  };
+ }
+ produto.id = idProduto;
+
  //Valida produto (campos obrigatorios)
  if(!validate(produto) || typeof produto.id !== 'string') {
    console.error("produto invalido");
@@ -161,27 +219,13 @@ module.exports.alterar = async (event, context) => {
    };
  }
 
-  //Adiciona campos automaticos (Data de alteracao).
+
+  //Adiciona campos automaticos (Data de alteracao e de criacao).
   const timestamp = (new Date()).toISOString();
   produto = {...produto, updatedAt: timestamp}
-
-
-  // Verifica se ja existe um produto com esse codigo (codigo)
-  var produtoRepetido = await getProdutoByCodigo(produto.codigo);
-  if(produtoRepetido.Count > 1) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({error:"Codigo do produto já existe em varios produtos!"})
-    };
-  } else if (produtoRepetido.Count > 0) {
-    // Caso tenha um produto com esse codigo verifica se nao é o proprio produto
-    if (produtoRepetido.Items[0].id !== produto.id) { 
-      return {
-        statusCode: 400,
-        body: JSON.stringify({error:"Codigo do produto já existe!"})
-      };
-    }
-  }
+  if (produto.submittedAt !== "string")
+    produto.submittedAt = timestamp;
+  
   const params = {
     TableName: TABLE,
     Item: produto
@@ -201,36 +245,14 @@ module.exports.alterar = async (event, context) => {
   });
 }
 
+
+/************************************************************
+ Funcao interna de validacao do esquema de produto
+*************************************************************/
 const validate = (value) => {
-  if (typeof value.descricao !== 'string' || typeof value.codigo !== 'string' || typeof value.nome !== 'string' ) {
+  if (typeof value.descricao !== 'string' || typeof value.nome !== 'string' ) {
     return false;
   }
   return true;
 }
 
-
-const getProdutoByCodigo = (codigo) => {
-
-  var key = { "codigo": codigo };
-
-  const params = {
-    TableName: TABLE,
-    IndexName: "codigo-index",
-    FilterExpression:'codigo = :codigo',
-    ExpressionAttributeValues:{ ":codigo" : codigo },
-    ScanIndexForward: false
-  }
-
-  return new Promise((resolve, reject) => {
-    dynamoDb.scan(params, (error, data) => {
-      if (error) {
-        console.log(`getProdutoByCodigo ERROR=${error.stack}`);
-          reject(error);
-      } else {
-        console.log(data);
-        resolve(data);
-      }
-    });
-  });
-  
-} 

@@ -21,10 +21,34 @@ export function refreshData(lista) {
   return { type: Types.PRODUTO_REFRESH, payload: lista };
 }
 
-export function LoadData(id, data) {
- return { type: Types.PRODUTO_LOAD, payload:  { id: id, estoque: data} };
+export function LoadDadosProduto(id, data) {
+ return { type: Types.PRODUTO_LOAD, payload:  { id: id, item: data} };
 }
 
+export function carregarDadosProduto(id) {
+  console.log("carregando");
+  return dispatch => {
+    let dadosProduto = null;
+    dispatch(RequestingData());
+    console.log("busacar dados do produto");
+    var serviceProduto = new ServiceProduto();
+    return serviceProduto.buscar(id)
+    .then(data => {      
+      console.log("buscar estoque");
+      dadosProduto = data;
+      var service = new ServiceEstoque();
+      return service.buscarEstoqueProduto(id)
+    }).then(data => {
+      console.log("dados recebidos");
+      dispatch(LoadDadosProduto(id, {...dadosProduto, estoque: data}));
+      dispatch(DataReceived());
+    }).catch((err) => {
+      dispatch(ShowMessage(AlertTypes.Error, "Erro ao conectar com o servidor", "Não foi possível obter os dados do produto!", err))
+    });
+  };
+}
+
+/*
 
 export function buscarDetalhes(id) {
   return dispatch => {
@@ -38,9 +62,9 @@ export function buscarDetalhes(id) {
       dispatch(ShowMessage(AlertTypes.Error, "Erro ao conectar com o servidor", "Não foi possível obter os dados do produto!", err))
     });
   };
-
-
 }
+
+*/
 
 /*
 export function apagar(id) {

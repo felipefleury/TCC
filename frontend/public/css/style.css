@@ -11,6 +11,16 @@ nav .brand-logo {
   color: #444;
 }
 
+.imageBack1 {
+  background-image: url(../background1.jpg);
+}
+.imageBack2 {
+  background-image: url(../background2.jpg);
+}
+.imageBack3 {
+  background-image: url(../background3.jpg);
+}
+
 p {
   line-height: 2rem;
 }
