@@ -49,6 +49,8 @@ module.exports.deleteUser = async (event, context) => {
 
 module.exports.authenticate = async (event, context) => {
   
+
+
   let _parsed;
   try {
     _parsed = JSON.parse(event.body);
@@ -61,36 +63,76 @@ module.exports.authenticate = async (event, context) => {
   }
   const { username, password } = _parsed;
 
-  var key = { "username": username };
+  let finduser = await getUserByLogin(username);
+  if (finduser) {
+    console.log(finduser);
+    let user = await getUserByID(finduser.id);
+    console.log(user);
+    if(user.password === password) {
+        console.log("Gerando Token");
+        // caso a senha do usuário seja encontrada.... iremos criar um token:
+        var token = jwt.sign(user, JWT_ENCRYPTION_CODE, {
+          expiresIn: '24h' //o token irá expirar em 24 hora2
+        });
+        return({ statusCode: 200, body: JSON.stringify(token) })
+      }
+  }
+  return({ statusCode: 404, body: JSON.stringify({ error: "usuario ou senha invalida!" }) })
+
+
+  /*sssss
+
   const params = {
-    Key: key, 
-    TableName: USUARIOS_TABLE
-  };
+    TableName: USUARIOS_TABLE,
+    IndexName: "username-index",
+    FilterExpression:'username = :username',
+    ExpressionAttributeValues:{ ":username" : username },
+    ScanIndexForward: false
+  }
 
   return await new Promise((resolve, reject) => {
-    dynamoDb.get(params, (error, data) => {
+    dynamoDb.scan(params, (error, data) => {
       if (error) {
         console.log(`autenticate ERROR=${error.stack}`);
           resolve({
             statusCode: 400,
             body: JSON.stringify({error:`Could not autenticate: ${error.stack}`})
           });
-  
       } else {
-        var senha = data["Item"]["password"];
-        if (password == senha) {
-          // caso a senha do usuário seja encontrada.... iremos criar um token:
-          var token = jwt.sign(data, JWT_ENCRYPTION_CODE, {
-            expiresIn: '1h' //o token irá expirar em 24 horas
-          });
-          resolve({ statusCode: 200, body: JSON.stringify(token) });
-        } else {
-          resolve({ statusCode: 400, body: JSON.stringify({error:"Usuario ou senha inválida!"})});
-          
-        }
+        console.log(data);
+        var key = { "id": data["Items"]["id"] };
+        console.log(key);
+        const paramsget = {
+          Key: key, 
+          TableName: USUARIOS_TABLE
+        };
+        dynamoDb.get(paramsget, (error, data) => {
+          if (error) {
+            console.log(`autenticate ERROR=${error.stack}`);
+              resolve({
+                statusCode: 400,
+                body: JSON.stringify({error:`Could not autenticate: ${error.stack}`})
+              });
+          } else {
+            console.log(data);
+            if (data.length == 1) {
+              var senha = data["Item"]["password"];
+              if (password == senha) {
+                // caso a senha do usuário seja encontrada.... iremos criar um token:
+                var token = jwt.sign(data, JWT_ENCRYPTION_CODE, {
+                  expiresIn: '1h' //o token irá expirar em 24 horas
+                });
+                resolve({ statusCode: 200, body: JSON.stringify(token) });
+                console.log("FIM!!!!!!!!!!!");
+              }
+            }
+          }
+        });
+        resolve({ statusCode: 400, body: JSON.stringify({error:"Usuario ou senha inválida!"})});
       }
     });
   });
+  */
 };
 
 
@@ -153,7 +195,11 @@ module.exports.listarUsuarios = async  (event, context) => {
   });
 }
 
-
+/*****************************************************************
+ Funcao responsavel por criar usuarios com o papel selecionado
+ endpoint: POST /users/{id}/estoque
+ visibilidade: <admin> DURANTE A FASE DE TESTES O ACESSO ESTA LIBERADO
+******************************************************************/
 module.exports.createUser = async (event, context) => {
   
   //Carrega usuário enviado via POST
@@ -235,14 +281,8 @@ const getUserByLogin = (username) => {
   const params = {
     TableName: USUARIOS_TABLE,
     IndexName: "username-index",
-    //KeyConditionExpression: 'username = :username',
-    //ExpressionAttributeValues: {
-    //    ":genre": "Rock"
-    //}
-    //,    ProjectionExpression:'username', // remove this string if you want to get not only 'name'
     FilterExpression:'username = :username',
     ExpressionAttributeValues:{ ":username" : username },
-    //ProjectionExpression: "id, username, password",
     ScanIndexForward: false
   }
 
@@ -252,8 +292,35 @@ const getUserByLogin = (username) => {
         console.log(`getUserByLogin ERROR=${error.stack}`);
           reject(error);
       } else {
-        console.log(data);
-        resolve(data);
+        if (data.Count > 0) {
+          resolve(data.Items[0]);
+        } else {
+          resolve(null);
+        }
+      }
+    });
+  });
+  
+} 
+
+
+
+const getUserByID = (id) => {
+
+  var key = { "id": id };
+
+  const params = {
+    TableName: USUARIOS_TABLE,
+    Key: key
+  }
+
+  return new Promise((resolve, reject) => {
+    dynamoDb.get(params, (error, data) => {
+      if (error) {
+        console.log(`getUserById ERROR=${error.stack}`);
+          reject(error);
+      } else {
+        resolve(data.Item);
       }
     });
   });
