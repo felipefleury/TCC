@@ -19,6 +19,19 @@ let fornecedor2 = {
   "role": "fornecedor"
 }
 
+
+let login = {
+  "username": "fornecedor1",
+  "password": "123"
+}
+
+axios.post(baseURL + 'login', login).then(data => {
+  console.log(data);
+}).catch(err => {
+  console.log(err);
+})
+
+
 axios.post(baseURL + 'users', fornecedor1).then(data => {
   console.log(data);
   fornecedor1 = data;

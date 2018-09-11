@@ -68,6 +68,9 @@ module.exports.buscar = async (event, context) => {
             //body: JSON.stringify(`Could not create user: ${error.stack}`)
           });
       } else {
+        data.Item.token = jwt.sign({id: data.Item.id, preco: data.Item.preco }, JWT_ENCRYPTION_CODE, {
+          expiresIn: '24h' //o token irá expirar em 24 hora2
+        });
         resolve({ statusCode: 200, headers: {
           'Access-Control-Allow-Origin': '*',
           'Access-Control-Allow-Credentials': true, 
@@ -76,6 +79,9 @@ module.exports.buscar = async (event, context) => {
     });
   });
 }
+
+
+
 
 
 const getCorsHeaders = () => {
