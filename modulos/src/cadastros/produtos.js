@@ -9,6 +9,8 @@
 const AWS = require('aws-sdk');
 const jwt = require("jsonwebtoken");
 const uuid = require("uuid");
+import validar from "../util/validate";
+
 
 const TABLE = process.env.PRODUTOS_TABLE;
 const AWS_DEPLOY_REGION = process.env.AWS_DEPLOY_REGION;
@@ -17,6 +19,7 @@ const dynamoDb = new AWS.DynamoDB.DocumentClient({
     api_version: '2012-08-10',
     region: AWS_DEPLOY_REGION
 });
+
 
 /************************************************************
  Funcao responsavel por listar todos os produtos
@@ -98,12 +101,17 @@ const getCorsHeaders = () => {
  visibilidade: <admin> e <cadastro>
 *************************************************************/
 module.exports.apagar = async (event, context) => {
-
+  console.log(event);
+  console.log(event.headers.Authorization);
+  if (!validar.validate(event.headers.Authorization)){
+    console.error(`Erro ao validar token ${value}: ${err.stack}`);
+    throw err;
+  }
   let _parsed;// = value;
   try {
     _parsed = JSON.parse(event.body);
   } catch (err) {
-    console.error(`Could not parse requested JSON ${value}: ${err.stack}`);
+    console.error(`Could not parse requested JSON ${event.body}: ${err.stack}`);
     throw err;
   }  
   const id = _parsed.id;
