@@ -35,7 +35,7 @@ class detalhesProdutos extends React.Component {
   <div className="row">
         <div className="col s12 m4">
             <div className="icon-block">
-            <h2 className="center brown-text"><img src={item.fotoUrl} width={100} /></h2>
+            <h2 className="center brown-text"><img src={item.fotoUrl} width={200} /></h2>
             </div>
         </div>
         <div className="col s12 m4">
@@ -50,12 +50,14 @@ class detalhesProdutos extends React.Component {
               <h4 className="center">Por {currencyFormatter.format(item.preco, { locale: 'pt-br' })}</h4>
             </div>
             <div className="icon-block">
-              <i class="material-icons">local_shipping</i>
+              <i className="large material-icons" style={{fontSize:30}}>local_shipping</i>
               <p className="light">Disponibilidade : {quantidade} un.</p>
               </div>
               <ul>{disponibilidade}</ul>
-              {(item.estoque.length > 0 ? <div>Comprar</div> : undefined)}
-          </div>
+            <div className="center-align">
+               {(item.estoque.length > 0 ? <a class="waves-effect waves-light btn"><i class="material-icons right">add_shopping_cart</i>Comprar</a> : undefined)}
+             </div>
+         </div>
           
         </div>                 
   </div>

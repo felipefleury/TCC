@@ -12,6 +12,11 @@ const dynamoDb = new AWS.DynamoDB.DocumentClient({
 });
 
 
+/*****************************************************************
+ Funcao responsavel por deletar os usuarios
+ endpoint: DELETE /user/{id}
+ visibilidade: <admin>
+******************************************************************/
 module.exports.deleteUser = async (event, context) => {
 
   let _parsed;// = value;
@@ -47,9 +52,13 @@ module.exports.deleteUser = async (event, context) => {
   
 }
 
-module.exports.authenticate = async (event, context) => {
-  
 
+/*****************************************************************
+ Funcao responsavel por autenticar os usuarios
+ endpoint: POST /login
+ visibilidade: pública
+******************************************************************/
+module.exports.authenticate = async (event, context) => {
 
   let _parsed;
   try {
@@ -78,61 +87,6 @@ module.exports.authenticate = async (event, context) => {
       }
   }
   return({ statusCode: 404, body: JSON.stringify({ error: "usuario ou senha invalida!" }) })
-
-
-  /*sssss
-
-  const params = {
-    TableName: USUARIOS_TABLE,
-    IndexName: "username-index",
-    FilterExpression:'username = :username',
-    ExpressionAttributeValues:{ ":username" : username },
-    ScanIndexForward: false
-  }
-
-  return await new Promise((resolve, reject) => {
-    dynamoDb.scan(params, (error, data) => {
-      if (error) {
-        console.log(`autenticate ERROR=${error.stack}`);
-          resolve({
-            statusCode: 400,
-            body: JSON.stringify({error:`Could not autenticate: ${error.stack}`})
-          });
-      } else {
-        console.log(data);
-        var key = { "id": data["Items"]["id"] };
-        console.log(key);
-        const paramsget = {
-          Key: key, 
-          TableName: USUARIOS_TABLE
-        };
-        dynamoDb.get(paramsget, (error, data) => {
-          if (error) {
-            console.log(`autenticate ERROR=${error.stack}`);
-              resolve({
-                statusCode: 400,
-                body: JSON.stringify({error:`Could not autenticate: ${error.stack}`})
-              });
-          } else {
-            console.log(data);
-            if (data.length == 1) {
-              var senha = data["Item"]["password"];
-              if (password == senha) {
-                // caso a senha do usuário seja encontrada.... iremos criar um token:
-                var token = jwt.sign(data, JWT_ENCRYPTION_CODE, {
-                  expiresIn: '1h' //o token irá expirar em 24 horas
-                });
-                resolve({ statusCode: 200, body: JSON.stringify(token) });
-                console.log("FIM!!!!!!!!!!!");
-              }
-            }
-          }
-        });
-        resolve({ statusCode: 400, body: JSON.stringify({error:"Usuario ou senha inválida!"})});
-      }
-    });
-  });
-  */
 };
 
 

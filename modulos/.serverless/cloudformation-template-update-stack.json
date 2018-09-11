@@ -267,7 +267,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/autenticacao/dev/1535507638289-2018-08-29T01:53:58.289Z/autenticacao.zip"
+          "S3Key": "serverless/autenticacao/dev/1535715362302-2018-08-31T11:36:02.302Z/autenticacao.zip"
         },
         "FunctionName": "autenticacao-dev-estoqueFornecedor",
         "Handler": "estoque/estoque.estoqueFornecedor",
@@ -295,14 +295,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "EstoqueFornecedorLambdaVersionfPVeu4aW5CLLxq9ziE3gyX0dviAZMXbR5xhUcdLac0": {
+    "EstoqueFornecedorLambdaVersionSZMvFTEs3efTUcFThHow18DoPfa9vBzB5jYMZ5cmiI": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "EstoqueFornecedorLambdaFunction"
         },
-        "CodeSha256": "LFb/Ix4kvZkMqB0boUKwkcUi/D9DqOvFBJIJDrOvBZQ="
+        "CodeSha256": "3dlRjF5bhb+/YGB99mLQjmQWu074RVYATUeEQBYsGuQ="
       }
     },
     "EstoqueProdutoLambdaFunction": {
@@ -312,7 +312,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/autenticacao/dev/1535507638289-2018-08-29T01:53:58.289Z/autenticacao.zip"
+          "S3Key": "serverless/autenticacao/dev/1535715362302-2018-08-31T11:36:02.302Z/autenticacao.zip"
         },
         "FunctionName": "autenticacao-dev-estoqueProduto",
         "Handler": "estoque/estoque.estoqueProduto",
@@ -340,14 +340,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "EstoqueProdutoLambdaVersioncvVwnOwlWEfnURYAvxTg16xFSDp3sHju6FzstOB1aqs": {
+    "EstoqueProdutoLambdaVersionF3RNo1G2OAEjIunbOKjao6Fe4qFs3c8xZQ61tkYI": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "EstoqueProdutoLambdaFunction"
         },
-        "CodeSha256": "LFb/Ix4kvZkMqB0boUKwkcUi/D9DqOvFBJIJDrOvBZQ="
+        "CodeSha256": "3dlRjF5bhb+/YGB99mLQjmQWu074RVYATUeEQBYsGuQ="
       }
     },
     "ProdutosLambdaFunction": {
@@ -357,7 +357,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/autenticacao/dev/1535507638289-2018-08-29T01:53:58.289Z/autenticacao.zip"
+          "S3Key": "serverless/autenticacao/dev/1535715362302-2018-08-31T11:36:02.302Z/autenticacao.zip"
         },
         "FunctionName": "autenticacao-dev-produtos",
         "Handler": "cadastros/produtos.listar",
@@ -385,14 +385,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "ProdutosLambdaVersionDAg5LYPcQZQdtCBXS9jJmiXBz5Gareq1rLrwnT98": {
+    "ProdutosLambdaVersionSqdjRVIJ5ZHpIC8DTS3LWD2IQpEgp87fq1lup5Gy6A": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ProdutosLambdaFunction"
         },
-        "CodeSha256": "LFb/Ix4kvZkMqB0boUKwkcUi/D9DqOvFBJIJDrOvBZQ="
+        "CodeSha256": "3dlRjF5bhb+/YGB99mLQjmQWu074RVYATUeEQBYsGuQ="
       }
     },
     "ProdutosBuscarLambdaFunction": {
@@ -402,7 +402,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/autenticacao/dev/1535507638289-2018-08-29T01:53:58.289Z/autenticacao.zip"
+          "S3Key": "serverless/autenticacao/dev/1535715362302-2018-08-31T11:36:02.302Z/autenticacao.zip"
         },
         "FunctionName": "autenticacao-dev-produtosBuscar",
         "Handler": "cadastros/produtos.buscar",
@@ -430,14 +430,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "ProdutosBuscarLambdaVersiondc6ZSikWUYH3kDxmfdrNqNoxNDdYOj4qRIszWGgvOg8": {
+    "ProdutosBuscarLambdaVersionTKBF08cU2MmtLzu2yo1tLMScFQS8yla8DO8iKwYBfs": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ProdutosBuscarLambdaFunction"
         },
-        "CodeSha256": "LFb/Ix4kvZkMqB0boUKwkcUi/D9DqOvFBJIJDrOvBZQ="
+        "CodeSha256": "3dlRjF5bhb+/YGB99mLQjmQWu074RVYATUeEQBYsGuQ="
       }
     },
     "ProdutoIncluirLambdaFunction": {
@@ -447,7 +447,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/autenticacao/dev/1535507638289-2018-08-29T01:53:58.289Z/autenticacao.zip"
+          "S3Key": "serverless/autenticacao/dev/1535715362302-2018-08-31T11:36:02.302Z/autenticacao.zip"
         },
         "FunctionName": "autenticacao-dev-produtoIncluir",
         "Handler": "cadastros/produtos.incluir",
@@ -475,14 +475,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "ProdutoIncluirLambdaVersion4gzD3DAuoqHtuZpvNA8HaOHYkmqQ7tQnsPksQ0kO4": {
+    "ProdutoIncluirLambdaVersionOm7BRxjCEQeLhiM52nt3wkopOBD6hQz6EcPNFqZTTOo": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ProdutoIncluirLambdaFunction"
         },
-        "CodeSha256": "LFb/Ix4kvZkMqB0boUKwkcUi/D9DqOvFBJIJDrOvBZQ="
+        "CodeSha256": "3dlRjF5bhb+/YGB99mLQjmQWu074RVYATUeEQBYsGuQ="
       }
     },
     "ApagarLambdaFunction": {
@@ -492,7 +492,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/autenticacao/dev/1535507638289-2018-08-29T01:53:58.289Z/autenticacao.zip"
+          "S3Key": "serverless/autenticacao/dev/1535715362302-2018-08-31T11:36:02.302Z/autenticacao.zip"
         },
         "FunctionName": "autenticacao-dev-apagar",
         "Handler": "cadastros/produtos.apagar",
@@ -520,14 +520,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "ApagarLambdaVersionISfwcLjwwEqYM9LQCvMRG9saq7akk0DJuFvOGCc8": {
+    "ApagarLambdaVersiono18zltfxFfkcuYQ6OvcjM33sy2Bqanb0EOGX0X6TN44": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ApagarLambdaFunction"
         },
-        "CodeSha256": "LFb/Ix4kvZkMqB0boUKwkcUi/D9DqOvFBJIJDrOvBZQ="
+        "CodeSha256": "3dlRjF5bhb+/YGB99mLQjmQWu074RVYATUeEQBYsGuQ="
       }
     },
     "AlterarLambdaFunction": {
@@ -537,7 +537,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/autenticacao/dev/1535507638289-2018-08-29T01:53:58.289Z/autenticacao.zip"
+          "S3Key": "serverless/autenticacao/dev/1535715362302-2018-08-31T11:36:02.302Z/autenticacao.zip"
         },
         "FunctionName": "autenticacao-dev-alterar",
         "Handler": "cadastros/produtos.alterar",
@@ -565,14 +565,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "AlterarLambdaVersionHG2TNe9rdxQQHDQSS7fsQbHLFjwR7r4cZlomMfu08": {
+    "AlterarLambdaVersionWAysrGZbSRmmlaxP2MxoyS7zPXUvtUcA7zTgQfGtU": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "AlterarLambdaFunction"
         },
-        "CodeSha256": "LFb/Ix4kvZkMqB0boUKwkcUi/D9DqOvFBJIJDrOvBZQ="
+        "CodeSha256": "3dlRjF5bhb+/YGB99mLQjmQWu074RVYATUeEQBYsGuQ="
       }
     },
     "LoginLambdaFunction": {
@@ -582,7 +582,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/autenticacao/dev/1535507638289-2018-08-29T01:53:58.289Z/autenticacao.zip"
+          "S3Key": "serverless/autenticacao/dev/1535715362302-2018-08-31T11:36:02.302Z/autenticacao.zip"
         },
         "FunctionName": "autenticacao-dev-login",
         "Handler": "autenticacao/handler.authenticate",
@@ -610,14 +610,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "LoginLambdaVersionXgbE6jIK1VYTRC8rKDFoKWAOkNv7z2qJGhZ5e2yqPlU": {
+    "LoginLambdaVersionFOakzrwVyZnKo2eUA3Kf3fXw2OMBCXByo4za45S98": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "LoginLambdaFunction"
         },
-        "CodeSha256": "LFb/Ix4kvZkMqB0boUKwkcUi/D9DqOvFBJIJDrOvBZQ="
+        "CodeSha256": "3dlRjF5bhb+/YGB99mLQjmQWu074RVYATUeEQBYsGuQ="
       }
     },
     "CreateUserLambdaFunction": {
@@ -627,7 +627,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/autenticacao/dev/1535507638289-2018-08-29T01:53:58.289Z/autenticacao.zip"
+          "S3Key": "serverless/autenticacao/dev/1535715362302-2018-08-31T11:36:02.302Z/autenticacao.zip"
         },
         "FunctionName": "autenticacao-dev-createUser",
         "Handler": "autenticacao/handler.createUser",
@@ -655,14 +655,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "CreateUserLambdaVersion3g1oRTMCssqPStFScfVg2RAiJemC2o0zkOtsC2lErw": {
+    "CreateUserLambdaVersionvcw92FQI1YCXCt5ueQJKUf3u9Ca73aDdkRuoJj2o388": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "CreateUserLambdaFunction"
         },
-        "CodeSha256": "LFb/Ix4kvZkMqB0boUKwkcUi/D9DqOvFBJIJDrOvBZQ="
+        "CodeSha256": "3dlRjF5bhb+/YGB99mLQjmQWu074RVYATUeEQBYsGuQ="
       }
     },
     "ListarUsuariosLambdaFunction": {
@@ -672,7 +672,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/autenticacao/dev/1535507638289-2018-08-29T01:53:58.289Z/autenticacao.zip"
+          "S3Key": "serverless/autenticacao/dev/1535715362302-2018-08-31T11:36:02.302Z/autenticacao.zip"
         },
         "FunctionName": "autenticacao-dev-listarUsuarios",
         "Handler": "autenticacao/handler.listarUsuarios",
@@ -700,14 +700,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "ListarUsuariosLambdaVersiona4mkBtjWzXIzhobjWVhv54HvAVIFxQnVdgiQi8rpH4": {
+    "ListarUsuariosLambdaVersioncAgEt81gPo0Wk47yzJJyqAvnaOdl55bFZ4Dm0OCRBQ": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ListarUsuariosLambdaFunction"
         },
-        "CodeSha256": "LFb/Ix4kvZkMqB0boUKwkcUi/D9DqOvFBJIJDrOvBZQ="
+        "CodeSha256": "3dlRjF5bhb+/YGB99mLQjmQWu074RVYATUeEQBYsGuQ="
       }
     },
     "DeleteUserLambdaFunction": {
@@ -717,7 +717,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/autenticacao/dev/1535507638289-2018-08-29T01:53:58.289Z/autenticacao.zip"
+          "S3Key": "serverless/autenticacao/dev/1535715362302-2018-08-31T11:36:02.302Z/autenticacao.zip"
         },
         "FunctionName": "autenticacao-dev-deleteUser",
         "Handler": "autenticacao/handler.deleteUser",
@@ -745,14 +745,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "DeleteUserLambdaVersioniq2y0FMFKePQZX9DoNHFDsRPn1OvPpdLlP0mi5hh3o": {
+    "DeleteUserLambdaVersion4dXvUcVWvoP9mkjJNvfXQdICQXD4cYKDb8QnTF9Fks8": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "DeleteUserLambdaFunction"
         },
-        "CodeSha256": "LFb/Ix4kvZkMqB0boUKwkcUi/D9DqOvFBJIJDrOvBZQ="
+        "CodeSha256": "3dlRjF5bhb+/YGB99mLQjmQWu074RVYATUeEQBYsGuQ="
       }
     },
     "ApiGatewayRestApi": {
@@ -1688,7 +1688,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1535507638632": {
+    "ApiGatewayDeployment1535715362667": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -2326,67 +2326,67 @@
     "EstoqueFornecedorLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "EstoqueFornecedorLambdaVersionfPVeu4aW5CLLxq9ziE3gyX0dviAZMXbR5xhUcdLac0"
+        "Ref": "EstoqueFornecedorLambdaVersionSZMvFTEs3efTUcFThHow18DoPfa9vBzB5jYMZ5cmiI"
       }
     },
     "EstoqueProdutoLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "EstoqueProdutoLambdaVersioncvVwnOwlWEfnURYAvxTg16xFSDp3sHju6FzstOB1aqs"
+        "Ref": "EstoqueProdutoLambdaVersionF3RNo1G2OAEjIunbOKjao6Fe4qFs3c8xZQ61tkYI"
       }
     },
     "ProdutosLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ProdutosLambdaVersionDAg5LYPcQZQdtCBXS9jJmiXBz5Gareq1rLrwnT98"
+        "Ref": "ProdutosLambdaVersionSqdjRVIJ5ZHpIC8DTS3LWD2IQpEgp87fq1lup5Gy6A"
       }
     },
     "ProdutosBuscarLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ProdutosBuscarLambdaVersiondc6ZSikWUYH3kDxmfdrNqNoxNDdYOj4qRIszWGgvOg8"
+        "Ref": "ProdutosBuscarLambdaVersionTKBF08cU2MmtLzu2yo1tLMScFQS8yla8DO8iKwYBfs"
       }
     },
     "ProdutoIncluirLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ProdutoIncluirLambdaVersion4gzD3DAuoqHtuZpvNA8HaOHYkmqQ7tQnsPksQ0kO4"
+        "Ref": "ProdutoIncluirLambdaVersionOm7BRxjCEQeLhiM52nt3wkopOBD6hQz6EcPNFqZTTOo"
       }
     },
     "ApagarLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ApagarLambdaVersionISfwcLjwwEqYM9LQCvMRG9saq7akk0DJuFvOGCc8"
+        "Ref": "ApagarLambdaVersiono18zltfxFfkcuYQ6OvcjM33sy2Bqanb0EOGX0X6TN44"
       }
     },
     "AlterarLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "AlterarLambdaVersionHG2TNe9rdxQQHDQSS7fsQbHLFjwR7r4cZlomMfu08"
+        "Ref": "AlterarLambdaVersionWAysrGZbSRmmlaxP2MxoyS7zPXUvtUcA7zTgQfGtU"
       }
     },
     "LoginLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "LoginLambdaVersionXgbE6jIK1VYTRC8rKDFoKWAOkNv7z2qJGhZ5e2yqPlU"
+        "Ref": "LoginLambdaVersionFOakzrwVyZnKo2eUA3Kf3fXw2OMBCXByo4za45S98"
       }
     },
     "CreateUserLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "CreateUserLambdaVersion3g1oRTMCssqPStFScfVg2RAiJemC2o0zkOtsC2lErw"
+        "Ref": "CreateUserLambdaVersionvcw92FQI1YCXCt5ueQJKUf3u9Ca73aDdkRuoJj2o388"
       }
     },
     "ListarUsuariosLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ListarUsuariosLambdaVersiona4mkBtjWzXIzhobjWVhv54HvAVIFxQnVdgiQi8rpH4"
+        "Ref": "ListarUsuariosLambdaVersioncAgEt81gPo0Wk47yzJJyqAvnaOdl55bFZ4Dm0OCRBQ"
       }
     },
     "DeleteUserLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "DeleteUserLambdaVersioniq2y0FMFKePQZX9DoNHFDsRPn1OvPpdLlP0mi5hh3o"
+        "Ref": "DeleteUserLambdaVersion4dXvUcVWvoP9mkjJNvfXQdICQXD4cYKDb8QnTF9Fks8"
       }
     },
     "ServiceEndpoint": {
