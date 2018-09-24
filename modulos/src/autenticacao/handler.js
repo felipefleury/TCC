@@ -57,6 +57,7 @@ module.exports.deleteUser = async (event, context) => {
  Funcao responsavel por autenticar os usuarios
  endpoint: POST /login
  visibilidade: pública
+ deploy: sls deploy function -f autenticacao_login
 ******************************************************************/
 module.exports.authenticate = async (event, context) => {
 
@@ -79,7 +80,9 @@ module.exports.authenticate = async (event, context) => {
     console.log(user);
     if(user.password === password) {
         console.log("Gerando Token");
-        // caso a senha do usuário seja encontrada.... iremos criar um token:
+        // remove a senha do payload
+        user.password = undefined;
+        // criar o token:
         var token = jwt.sign(user, JWT_ENCRYPTION_CODE, {
           expiresIn: '24h' //o token irá expirar em 24 hora2
         });
