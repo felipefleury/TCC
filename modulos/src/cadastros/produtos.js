@@ -9,8 +9,8 @@
 const AWS = require('aws-sdk');
 const jwt = require("jsonwebtoken");
 const uuid = require("uuid");
-import validar from "../util/validate";
-
+const validar = require("../util/validate");
+const corsHeaders = require("../util/corsHeaders");
 
 const TABLE = process.env.PRODUTOS_TABLE;
 const AWS_DEPLOY_REGION = process.env.AWS_DEPLOY_REGION;
@@ -41,10 +41,7 @@ module.exports.listar = async (event, context) => {
             //body: JSON.stringify(`Could not create user: ${error.stack}`)
           });
       } else {
-        resolve({ statusCode: 200, headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Credentials': true, 
-        },  body: JSON.stringify(data.Items) });
+        resolve({ statusCode: 200, headers: corsHeaders,  body: JSON.stringify(data.Items) });
       }
     });
   });
@@ -74,25 +71,12 @@ module.exports.buscar = async (event, context) => {
         data.Item.token = jwt.sign({id: data.Item.id, preco: data.Item.preco }, JWT_ENCRYPTION_CODE, {
           expiresIn: '24h' //o token irá expirar em 24 hora2
         });
-        resolve({ statusCode: 200, headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Credentials': true, 
-        },  body: JSON.stringify(data.Item) });
+        resolve({ statusCode: 200, headers: corsHeaders,  body: JSON.stringify(data.Item) });
       }
     });
   });
 }
 
-
-
-
-
-const getCorsHeaders = () => {
-  return {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Credentials': true, 
-  }
-}
 
 
 /************************************************************
@@ -133,7 +117,7 @@ module.exports.apagar = async (event, context) => {
         });
   
       } else {
-        resolve({ statusCode: 200, headers: getCorsHeaders() });
+        resolve({ statusCode: 200, headers: corsHeaders });
       };
     });
   });
@@ -156,6 +140,7 @@ module.exports.incluir = async (event, context) => {
    console.error(`Could not parse requested JSON ${event.body}: ${err.stack}`);
    return {
      statusCode: 400,
+     headers: corsHeaders,
      body: JSON.stringify({error:"Erro ao carregar dados"})
    };
  }
@@ -165,6 +150,7 @@ module.exports.incluir = async (event, context) => {
    console.error("produto invalido");
    return {
      statusCode: 400,
+     headers: corsHeaders,
      body: JSON.stringify({error:"Produto invalido!"})
    };
  }
@@ -183,10 +169,11 @@ module.exports.incluir = async (event, context) => {
         console.log(`erro ao listar ERROR=${error.stack}`);
           resolve({
             statusCode: 400//,
+            headers: corsHeaders
             //body: JSON.stringify(`Could not create user: ${error.stack}`)
           });
       } else {
-        resolve({ statusCode: 200, headers: getCorsHeaders(), body: JSON.stringify(produto) });
+        resolve({ statusCode: 200, headers: corsHeaders, body: JSON.stringify(produto) });
       }
     });
   });

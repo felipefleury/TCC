@@ -14,7 +14,7 @@ const CorsHeaders = {
   'Access-Control-Allow-Credentials': true, 
 }
 const JWT_ENCRYPTION_CODE = process.env.JWT_ENCRYPTION_CODE;
-const connStr = process.env.SQLCONNECTIONSTRING;
+const connStr = process.env.SQLCONNECTIONSTRING_ESTOQUE;
 
 /************************************************************
  Funcao responsavel para informar a quantidade de produtos 
@@ -26,10 +26,14 @@ const connStr = process.env.SQLCONNECTIONSTRING;
 module.exports.estoqueFornecedor = async (event, context) => {
   // Pega valor passado como parametro no path da chamada 
   let idFornecedor = event.pathParameters.id;
-  const authUser = validar.validate(event.headers.Authorization, ['fornecedor', 'admin']);
+  const authUser = validar.validate(event.headers.Authorization);
   if (!authUser){
     return({ statusCode: 401, headers: CorsHeaders,  body: JSON.stringify({error: "Access denied"})});
   }
+  if (!validar.checkRole(authUser, ['fornecedor', 'admin'])){
+    return({ statusCode: 403, headers: CorsHeaders,  body: JSON.stringify({error: "Access denied"})});
+  }
+  
   idFornecedor = idFornecedor.replace(/'/g,'\'\'');  // Substitui aspas simples para evitar ataques de SQL Injection
   
   if(idFornecedor != authUser.id && authUser.role == "fornecedor") {
@@ -53,6 +57,59 @@ module.exports.estoqueFornecedor = async (event, context) => {
     .then(result => {
       //Retorna resultados
       resolve({ statusCode: 200, headers: CorsHeaders});
+      //fecha conexao
+      sql.close();
+    })
+    .catch(err => {
+      // Loga erro, fecha conexao e devolve o codigo de erro
+      console.log("erro! " + err);
+      sql.close();
+      resolve({ statusCode: 500, headers: CorsHeaders,  body: JSON.stringify({error: err})});
+    });
+  });
+}
+
+/************************************************************
+ Funcao responsavel para receber a quantidade de produtos
+ disponiveis de um fornecedor.
+ endpoint: GET /fornecedor/{id}/estoque
+ visibilidade: <fornecedor> ou <admin>
+ deploy: sls deploy function -f estoqueListaFornecedor
+*************************************************************/
+module.exports.estoqueListaFornecedor = async (event, context) => {
+  // Pega valor passado como parametro no path da chamada 
+  let idFornecedor = event.pathParameters.id;
+  const authUser = validar.validate(event.headers.Authorization);
+  if (!authUser){
+    return({ statusCode: 401, headers: CorsHeaders,  body: JSON.stringify({error: "Access denied"})});
+  }
+  if (!validar.checkRole(authUser, ['fornecedor', 'admin'])){
+    return({ statusCode: 406, headers: CorsHeaders,  body: JSON.stringify({error: "Access denied"})});
+  }
+  
+  idFornecedor = idFornecedor.replace(/'/g,'\'\'');  // Substitui aspas simples para evitar ataques de SQL Injection
+  
+  if(idFornecedor != authUser.id && authUser.role == "fornecedor") {
+    console.log("Not same user!");
+    return({ statusCode: 403, headers: CorsHeaders,  body: JSON.stringify({error: `Access denied for ${authUser.id}`})});
+  }
+  
+  // Fecha conexao anterior se ainda estiver aberta
+  sql.close();
+  return await new Promise((resolve, reject) => {
+    //Abre conexao com o banco de dados
+    sql.connect(connStr)
+    .then(conn => {
+      //Cria consulta
+      console.log(event.body);
+      var request = new sql.Request(conn);
+      var queryString = `proc_EstoqueProdutoFornecedor '${idFornecedor}'`;
+      console.log(queryString);
+      return request.query(`proc_EstoqueProdutoFornecedor '${idFornecedor}'`);
+    })
+    .then(result => {
+      //Retorna resultados
+      resolve({ statusCode: 200, headers: CorsHeaders, body: JSON.stringify(result.recordset)});
       //fecha conexao
       sql.close();
     })

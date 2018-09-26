@@ -2,6 +2,9 @@
 const AWS = require('aws-sdk');
 const jwt = require("jsonwebtoken");
 const uuid = require("uuid");
+const validar = require("../util/validate");
+const corsHeaders = require("../util/corsHeaders");
+
 
 const USUARIOS_TABLE = process.env.USUARIOS_TABLE;
 const AWS_DEPLOY_REGION = process.env.AWS_DEPLOY_REGION;
@@ -16,17 +19,25 @@ const dynamoDb = new AWS.DynamoDB.DocumentClient({
  Funcao responsavel por deletar os usuarios
  endpoint: DELETE /user/{id}
  visibilidade: <admin>
+ deploy: sls deploy function -f autenticacao_deleteUser
 ******************************************************************/
 module.exports.deleteUser = async (event, context) => {
 
-  let _parsed;// = value;
-  try {
-    _parsed = JSON.parse(event.body);
-  } catch (err) {
-    console.error(`Could not parse requested JSON ${value}: ${err.stack}`);
-    throw err;
-  }  
-  const id = _parsed.id;
+
+  let id = event.pathParameters.id;
+  const authUser = validar.validate(event.headers.Authorization);
+  if (!authUser){
+    return({ statusCode: 401, headers: corsHeaders,  body: JSON.stringify({error: "Access denied"})});
+  }
+  if (!validar.checkRole(authUser, ['admin'])){
+    return({ statusCode: 403, headers: corsHeaders,  body: JSON.stringify({error: "Access denied"})});
+  }
+  
+  if(id == authUser.id) {
+    console.log("Same user!");
+    return({ statusCode: 412, headers: corsHeaders,  body: JSON.stringify({error: `Cannot delete itself ${authUser.id}`})});
+  }
+  
   console.log(id);
   var key = { "id": id };
   const params = {
@@ -41,6 +52,7 @@ module.exports.deleteUser = async (event, context) => {
         console.error("Unable to delete item. Error JSON:" + JSON.stringify(error, null, 2));
         resolve({
           statusCode: 400,
+          headers: corsHeaders,
           body: JSON.stringify({error:`Could not delete user: ${error.stack}`})
         });
   
@@ -67,7 +79,8 @@ module.exports.authenticate = async (event, context) => {
   } catch (err) {
     console.error(`Could not parse requested JSON ${event.body}: ${err.stack}`);
     return {
-      statusCode: 500
+      statusCode: 400,
+      headers: corsHeaders
       //body: JSON.stringify({error:`Could not parse json: ${err.stack}`})
     };
   }
@@ -86,10 +99,10 @@ module.exports.authenticate = async (event, context) => {
         var token = jwt.sign(user, JWT_ENCRYPTION_CODE, {
           expiresIn: '24h' //o token irá expirar em 24 hora2
         });
-        return({ statusCode: 200, body: JSON.stringify(token) })
+        return({ statusCode: 200, headers: corsHeaders, body: JSON.stringify(token) })
       }
   }
-  return({ statusCode: 404, body: JSON.stringify({ error: "usuario ou senha invalida!" }) })
+  return({ statusCode: 404, headers: corsHeaders, body: JSON.stringify({ error: "usuario ou senha invalida!" }) })
 };
 
 
@@ -116,37 +129,41 @@ const parseUser = (value) => {
 
 
 /*****************************************************************
- Funcao responsavel por listar os usuarios com o papel selecionado
- Apenas a listagem de fornecedores é liberada
- endpoint: POST /fornecedor/{id}/estoque
- visibilidade: <admin> ou publico caso o papel seja fornecedor
+ Funcao responsavel por listar os usuarios
+ endpoint: GET /users
+ visibilidade: <admin>
+ deploy: sls deploy function -f autenticacao_listarUsuarios
 ******************************************************************/
 module.exports.listarUsuarios = async  (event, context) => {
 
-  let role = event.pathParameters.role; 
-
+  const authUser = validar.validate(event.headers.Authorization);
+  if (!authUser){
+    return({ statusCode: 401, headers: corsHeaders,  body: JSON.stringify({error: "Access denied"})});
+  }
+  if (!validar.checkRole(authUser, ['admin'])){
+    return({ statusCode: 403, headers: corsHeaders,  body: JSON.stringify({error: "Access denied"})});
+  }
+  
   const params = {
     TableName: USUARIOS_TABLE,
     IndexName: "userrole-index",
-    FilterExpression:'#userrole = :filterrole',
-    ExpressionAttributeNames: { "#userrole" : "role"},
-    ExpressionAttributeValues:{ ":filterrole" : role },
-    ProjectionExpression: "id, nome",
-    ScanIndexForward: false
+    //FilterExpression:'#userrole = :filterrole',
+    //ExpressionAttributeNames: { "#userrole" : "role"},
+    //ExpressionAttributeValues:{ ":filterrole" : role },
+    //ProjectionExpression: "id, nome",
+    //ScanIndexForward: false
   };
   return await new Promise((resolve, reject) => {
     dynamoDb.scan(params, (error, data) => {
       if (error) {
         console.log(`erro ao listar ERROR=${error.stack}`);
           resolve({
-            statusCode: 400//,
+            statusCode: 400,
+            headers: corsHeaders
             //body: JSON.stringify(`Could not create user: ${error.stack}`)
           });
       } else {
-        resolve({ statusCode: 200, headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Credentials': true, 
-        },  body: JSON.stringify(data.Items) });
+        resolve({ statusCode: 200, headers: corsHeaders,  body: JSON.stringify(data.Items) });
       }
     });
   });
@@ -154,8 +171,9 @@ module.exports.listarUsuarios = async  (event, context) => {
 
 /*****************************************************************
  Funcao responsavel por criar usuarios com o papel selecionado
- endpoint: POST /users/{id}/estoque
- visibilidade: <admin> DURANTE A FASE DE TESTES O ACESSO ESTA LIBERADO
+ endpoint: POST /users
+ visibilidade: <admin>
+ deploy: sls deploy function -f autenticacao_createUser
 ******************************************************************/
 module.exports.createUser = async (event, context) => {
   
@@ -168,6 +186,7 @@ module.exports.createUser = async (event, context) => {
     console.error(`Could not parse requested JSON ${event.body}: ${err.stack}`);
     return {
       statusCode: 400,
+      headers: corsHeaders,
       body: JSON.stringify({error:"Erro ao carregar dados"})
     };
   }
@@ -177,6 +196,7 @@ module.exports.createUser = async (event, context) => {
     console.error("Usuario invalido");
     return {
       statusCode: 400,
+      headers: corsHeaders,
       body: JSON.stringify({error:"Usuario invalido!"})
     };
   }
@@ -191,9 +211,10 @@ module.exports.createUser = async (event, context) => {
 
   // Verifica se ja existe um usuario com esse login (username)
   var usersWithSameLogin = await getUserByLogin(user.username);
-  if(usersWithSameLogin.Count > 0) {
+  if(usersWithSameLogin) {
     return {
       statusCode: 400,
+      headers: corsHeaders,
       body: JSON.stringify({error:"Usuario existente!"})
     };
   } 
@@ -208,11 +229,12 @@ module.exports.createUser = async (event, context) => {
       if (error) {
         console.log(`createUser ERROR=${error.stack}`);
           resolve({
-            statusCode: 400//,
+            statusCode: 400,
+            headers: corsHeaders
             //body: JSON.stringify(`Could not create user: ${error.stack}`)
           });
       } else {
-        resolve({ statusCode: 200, body: JSON.stringify(user) });
+        resolve({ statusCode: 200, headers: corsHeaders, body: JSON.stringify(user) });
       }
     });
   });
