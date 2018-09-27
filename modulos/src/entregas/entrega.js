@@ -13,7 +13,7 @@ const corsHeaders = require("../util/corsHeaders");
 
 
 const JWT_ENCRYPTION_CODE = process.env.JWT_ENCRYPTION_CODE;
-const connStr = process.env.SQLCONNECTIONSTRING_ENTREGAS;
+const connStr = process.env.SQLCONNECTIONSTRING_ENTREGA;
 
 /************************************************************
  Funcao responsavel por listar as entregas.
@@ -24,7 +24,7 @@ const connStr = process.env.SQLCONNECTIONSTRING_ENTREGAS;
 module.exports.entregasListar = async (event, context) => {
   // Pega valor passado como parametro no path da chamada 
   
-  console.log(event);
+  console.log(event.queryStringParameters);
 
   const authUser = validar.validate(event.headers.Authorization);
   if (!authUser){
@@ -34,10 +34,13 @@ module.exports.entregasListar = async (event, context) => {
   // fornecedores e clientes só podem ver suas entregas
   let idFornecedor = '';
   let idUsuario = '';
-  
+  let idPedido = 0;
+  let idStatus = 1; // Pendente
+
   if (authUser.role == 'fornecedor') idFornecedor = authUser.id;
   if (authUser.role == 'cliente') idUsuario = authUser.id;
   if (authUser.role == 'vendedor') idUsuario = authUser.id;
+  console.log(` idFornecedor=${idFornecedor}, idUsuario:${idUsuario}, idPedido=${idPedido}, idStatus=${idStatus} `);
 
   // Fecha conexao anterior se ainda estiver aberta
   sql.close();
@@ -47,8 +50,8 @@ module.exports.entregasListar = async (event, context) => {
     .then(conn => {
       //Cria consulta
       console.log(event.body);
-      var request = new sql.Request(conn);
-      var queryString = `proc_EntregasLista ${prepareParameter(idFornecedor)}, ${prepareParameter(idUsuario)}`;
+      let request = new sql.Request(conn);
+      var queryString = `proc_EntregasLista ${prepareParameter(idFornecedor)}, ${prepareParameter(idUsuario)}, ${idPedido}, ${idStatus}`;
       console.log(queryString);
       return request.query(queryString);
     })
@@ -106,7 +109,7 @@ module.exports.entregasAtualizarStatus = async (event, context) => {
       //Cria consulta
       console.log(event.body);
       var request = new sql.Request(conn);
-      var queryString = `proc_EntregasAtualizarStatus ${idEntrega}, '${authUser.id}', '${status}'`;
+      var queryString = `proc_EntregasAtualizarStatus '${idEntrega}', '${authUser.id}', '${status}'`;
       console.log(queryString);
       return request.query(queryString);
     })

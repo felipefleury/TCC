@@ -169,7 +169,7 @@ END
 
 GO
 
-
+CREATE USER userTCC FOR LOGIN userTCC
 
 GRANT EXECUTE ON OBJECT::proc_PedidosLista
     TO userTCC;
@@ -187,7 +187,7 @@ USE TCC_Entregas
 GO
 CREATE TABLE Entregas (
     id UNIQUEIDENTIFIER NOT NULL,
-    idPedido UNIQUEIDENTIFIER NOT NULL,
+    idPedido int NOT NULL,
     idFornecedor UNIQUEIDENTIFIER NOT NULL,
     endereco varchar(100),
     bairro varchar(50),
@@ -203,7 +203,7 @@ GO
 
 
 CREATE TABLE StatusEntrega (
-    id UNIQUEIDENTIFIER,
+    id int identity(1,1) NOT NULL,
     idEntrega UNIQUEIDENTIFIER,
     status varchar(1000),
     updatedAt datetime,
@@ -212,46 +212,58 @@ CREATE TABLE StatusEntrega (
     (id)
 )
 GO
-CREATE PROCEDURE proc_EntregasLista
+
+INSERT INTO Entregas (id, idPedido, idFornecedor, endereco, bairro, cidade, uf, status, updatedAt, submittedAt)
+SELECT '962f1bd6-7185-4416-b0dc-37ce9ba1264c', 1, 'c9996726-6214-4308-865a-d9f8b31e67e9', 'Rua Antonio Leite, 213', 'Centro', 'São Paulo', 'SP', 1, GETDATE(), GETDATE() 
+
+
+GO
+ALTER PROCEDURE proc_EntregasLista
 @IDFORNECEDOR AS UNIQUEIDENTIFIER = NULL,
 @IDUSUARIO AS UNIQUEIDENTIFIER = NULL,
 @IDPEDIDO AS INT = 0,
-@STATUS AS VARCHAR(1000)
+@STATUS AS TINYINT = 1
 AS
 BEGIN
     SET NOCOUNT ON
-    SELECT id, idPedido, idFornecedor, endereco, bairro, cidade, uf, status, updatedAt, submittedAt 
-    FROM Entregas AS E
-    WHERE (E.status = 1 OR @STATUS <> 'PENDENTE') -- ENTREGA PENDENTE
+    SELECT E.id, idPedido, idFornecedor, endereco, bairro, cidade, uf, E.updatedAt, E.submittedAt, MAX(S.id) idStatus
+    INTO #ENTREGAS  --
+    FROM Entregas AS E LEFT JOIN StatusEntrega S on E.id = S.idEntrega
+    WHERE (E.status = @STATUS) -- 1 - ENTREGA PENDENTE
     AND (idFornecedor = @IDFORNECEDOR OR @IDFORNECEDOR is null)
     AND (idPedido = @IDPEDIDO OR @IDPEDIDO = 0)
+    GROUP BY E.id, idPedido, idFornecedor, endereco, bairro, cidade, uf, E.updatedAt, E.submittedAt
     
+    SELECT E.id, idPedido, idFornecedor, endereco, bairro, cidade, uf,  ISNULL(S.status, 'Pendente') status, ISNULL(S.updatedAt, E.updatedAt) updatedAt, E.submittedAt  
+    FROM #ENTREGAS AS E LEFT JOIN StatusEntrega S on E.id = S.idEntrega and E.idStatus = S.id 
+
 END
 GO
-
+proc_EntregasLista
 GO
 
-CREATE PROCEDURE proc_PedidosAtualizarStatus
-@IDPEDIDO AS INT,
+ALTER PROCEDURE proc_EntregasAtualizarStatus
+@IDENTREGA AS UNIQUEIDENTIFIER,
 @IDFORNECEDOR AS UNIQUEIDENTIFIER,
 @STATUS AS VARCHAR(1000)
 AS
 BEGIN
     SET NOCOUNT ON
-    UPDATE Pedidos
-    SET [status] = @STATUS
-    WHERE id = @IDPEDIDO
+    INSERT INTO StatusEntrega (idEntrega, status, updatedAt, submittedAt)
+    SELECT id, @STATUS, GETDATE(), GETDATE()
+    FROM Entregas
+    WHERE id = @IDENTREGA
      AND idFornecedor = @IDFORNECEDOR
 END
 
 GO
 
+CREATE USER userTCC FOR LOGIN userTCC
 
-
-GRANT EXECUTE ON OBJECT::proc_PedidosLista
+GRANT EXECUTE ON OBJECT::proc_EntregasLista
     TO userTCC;
 
-GRANT EXECUTE ON OBJECT::proc_PedidosAtualizarStatus
+GRANT EXECUTE ON OBJECT::proc_EntregasAtualizarStatus
     TO userTCC;
 
-
+Select * FROM StatusEntrega 
