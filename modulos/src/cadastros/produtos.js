@@ -25,6 +25,7 @@ const dynamoDb = new AWS.DynamoDB.DocumentClient({
  Funcao responsavel por listar todos os produtos
  endpoint: GET /produtos
  visibilidade: pública
+ deploy: sls deploy function -f produtos_Listar
 *************************************************************/
 module.exports.listar = async (event, context) => {
   console.log(event);
@@ -168,7 +169,7 @@ module.exports.incluir = async (event, context) => {
       if (error) {
         console.log(`erro ao listar ERROR=${error.stack}`);
           resolve({
-            statusCode: 400//,
+            statusCode: 400,
             headers: corsHeaders
             //body: JSON.stringify(`Could not create user: ${error.stack}`)
           });
@@ -240,7 +241,7 @@ module.exports.alterar = async (event, context) => {
             //body: JSON.stringify(`Could not create user: ${error.stack}`)
           });
       } else {
-        resolve({ statusCode: 200, headers: getCorsHeaders(), body: JSON.stringify(produto) });
+        resolve({ statusCode: 200, headers: corsHeaders, body: JSON.stringify(produto) });
       }
     });
   });

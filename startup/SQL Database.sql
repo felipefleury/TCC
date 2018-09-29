@@ -21,16 +21,7 @@ CREATE PROCEDURE proc_BuscaEstoqueProduto
 AS
 BEGIN
     SET NOCOUNT ON
-
-    DECLARE @DATALIMITE AS DATETIME
-    SET @DATALIMITE = DATEADD(hour, -1, GETDATE())
-
-    SELECT  Quantidade - ISNULL((SELECT SUM(res.Quantidade) 
-                           FROM Reserva res 
-                          WHERE res.idProduto = est.idProduto 
-                            and res.idFornecedor = est.idFornecedor 
-                            and res.dataReserva >= @DATALIMITE), 0) quantidade, 
-            idFornecedor  
+    SELECT  SUm(Quantidade) quantidade
     FROM Estoque est
     WHERE idProduto = @IDPRODUTO
 END

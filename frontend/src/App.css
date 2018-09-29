@@ -21,3 +21,38 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+#navSuperior .navMenuSup {
+  height:20px;
+  margin-bottom: 0px;
+  margin-left:5px;
+  text-align: center;
+}
+
+#navSuperior .notification-badge {
+  position:relative;
+  padding:5px 9px;
+  background-color: #f5f1f2;
+  color: #941e1e;
+  bottom: 13px;
+  left: 0px;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+#nav-mobile .notification-badge {
+  position:relative;
+  padding:5px 9px;
+  background-color: #f5f1f2;
+  color: #941e1e;
+  bottom: 0px;
+  left: 2px;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+
+
+
+.notif{
+  position: absolute;
+}

@@ -12,13 +12,13 @@ export default class EstoqueService {
         return lista;
       }
         
-/*
-  async listar() {
-    const response = await axios.get('produtos');
+
+  async listar(idFornecedor) {
+    const response = await axios.get(`fornecedores/${idFornecedor}/estoque`);
     const lista = response.data;
-    return normalize(lista, mySchema);
+    return lista;
   }
-  
+  /*
   async buscar(id) {
     const response = await axios.get('produtos/' + id);
     const lista = response.data;

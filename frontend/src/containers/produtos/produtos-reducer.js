@@ -2,11 +2,20 @@ import { Types } from './produtos-types';
 
 // The initial state of the App
 const initialState = {
-  entities: null,
+  entities: getFromStorage("produtos_entities"),
   current: {},  
-  result: []
+  cache: window.sessionStorage.getItem("produtos_cache"),
+  result: (getFromStorage("produtos_result") || [])
   };
 
+
+function getFromStorage(item, defaultValue) {
+  return JSON.parse(window.sessionStorage.getItem(item));
+}
+
+function saveStorage(item, data) {
+  window.sessionStorage.setItem(item, JSON.stringify(data));
+}
 
 export default function ProdutoReducer(
   state = initialState, 
@@ -14,6 +23,9 @@ export default function ProdutoReducer(
   {
   switch (action.type) {
     case Types.PRODUTO_REFRESH:
+      saveStorage("entities", action.payload.entities);
+      saveStorage("result", action.payload.result);
+      
       return { ...state, entities: action.payload.entities, result: action.payload.result }
     case Types.PRODUTO_LOAD:
       return { ...state, current: action.payload}      

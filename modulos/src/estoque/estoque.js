@@ -84,7 +84,7 @@ module.exports.estoqueListaFornecedor = async (event, context) => {
     return({ statusCode: 401, headers: CorsHeaders,  body: JSON.stringify({error: "Access denied"})});
   }
   if (!validar.checkRole(authUser, ['fornecedor', 'admin'])){
-    return({ statusCode: 406, headers: CorsHeaders,  body: JSON.stringify({error: "Access denied"})});
+    return({ statusCode: 403, headers: CorsHeaders,  body: JSON.stringify({error: "Access denied"})});
   }
   
   idFornecedor = idFornecedor.replace(/'/g,'\'\'');  // Substitui aspas simples para evitar ataques de SQL Injection

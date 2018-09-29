@@ -4,6 +4,7 @@ import Loadable from 'react-loadable';
 //import Loading from './components/loading/loading';
 import Home from './containers/Home/home';
 
+
 /* #STARTCOMPONENTES# */
 
 const AsyncProdutos = Loadable({
@@ -33,6 +34,8 @@ export default class Routing extends React.Component {
     )
   }
 }
+
+
 
 function Loading({ error }) {
   if (error) {

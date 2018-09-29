@@ -8,7 +8,6 @@ class ListaProdutos extends React.Component {
 
   constructor(props) {
     super(props);
-    this.clickItem = this.clickItem.bind(this);
   }
 
   componentDidMount() {
@@ -18,11 +17,7 @@ class ListaProdutos extends React.Component {
   loadData() {
     this.props.getData();
   }
-  
-  clickItem(id) {
-    //this.props.buscarDetalhes(id);
-    this.props.history.push(`${process.env.PUBLIC_URL}/produtos` + "/" + id);
-  }
+
 
   render() {
     let items = this.props.result.map((value, index) => {
@@ -30,11 +25,12 @@ class ListaProdutos extends React.Component {
         let item = this.props.entities.produtos[value];
         //console.log(item);
         return  <ListItem fotoUrl={item.fotoUrl} 
+                          key={item.id}
                           nome={item.nome} 
                           id={item.id}
                           descricao={item.descricao} 
                           clickItem={(e) => this.clickItem(item.id)}
-                          //onClick={e => this.props.history.push(`${process.env.PUBLIC_URL}/produtos` + "/" + item.id)} 
+                          url={`${process.env.PUBLIC_URL}/produtos/${item.id}`}
                 />
     });
     return (

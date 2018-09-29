@@ -3,61 +3,46 @@ import * as React from 'react';
 export default (props) => {
   return (
   <div>
+
   <div className="container">
-    <div className="section">
+  <div className="section">
 
-      <div className="row">
-        <div className="col s12 m4">
-          <div className="icon-block">
-            <h2 className="center brown-text"><i className="material-icons">flash_on</i></h2>
-            <h5 className="center">Speeds up development</h5>
-
-            <p className="light">We did most of the heavy lifting for you to provide a default stylings that incorporate our custom components. Additionally, we refined animations and transitions to provide a smoother experience for developers.</p>
-          </div>
-        </div>
-
-        <div className="col s12 m4">
-          <div className="icon-block">
-            <h2 className="center brown-text"><i className="material-icons">group</i></h2>
-            <h5 className="center">User Experience Focused</h5>
-
-            <p className="light">By utilizing elements and principles of Material Design, we were able to create a framework that incorporates components and animations that provide more feedback to users. Additionally, a single underlying responsive system across all platforms allow for a more unified user experience.</p>
-          </div>
-        </div>
-
-        <div className="col s12 m4">
-          <div className="icon-block">
-            <h2 className="center brown-text"><i className="material-icons">settings</i></h2>
-            <h5 className="center">Easy to work with</h5>
-
-            <p className="light">We have provided detailed documentation as well as specific code examples to help new users get started. We are also always open to feedback and can answer any questions a user may have about Materialize.</p>
-          </div>
-        </div>
-      </div>
-
+<div className="row">
+  <div className="col s12 m4">
+    <div className="icon-block">
+      <h2 className="center brown-text"><i className="material-icons">monetization_on</i></h2>
+      <h5 className="center">Speeds up development</h5>
+      <p className="light">We did most of the heavy lifting for you to provide a default stylings that incorporate our custom components. Additionally, we refined animations and transitions to provide a smoother experience for developers.</p>
     </div>
   </div>
 
+  <div className="col s12 m4">
+    <div className="icon-block">
+      <h2 className="center brown-text"><i className="material-icons">mood</i></h2>
+      <h5 className="center">User Experience Focused</h5>
 
-  <div className="parallax-container valign-wrapper">
-    <div className="section no-pad-bot">
-      <div className="container">
-        <div className="row center">
-          <h5 className="header col s12 light">A modern responsive front-end framework based on Material Design</h5>
-        </div>
-      </div>
+      <p className="light">By utilizing elements and principles of Material Design, we were able to create a framework that incorporates components and animations that provide more feedback to users. Additionally, a single underlying responsive system across all platforms allow for a more unified user experience.</p>
     </div>
-    <div className="parallax"><img src="background2.jpg" alt="Unsplashed background img 2" /></div>
   </div>
 
-  <div className="container">
+  <div className="col s12 m4">
+    <div className="icon-block">
+      <h2 className="center brown-text"><i className="material-icons">settings</i></h2>
+      <h5 className="center">Easy to work with</h5>
+
+      <p className="light">We have provided detailed documentation as well as specific code examples to help new users get started. We are also always open to feedback and can answer any questions a user may have about Materialize.</p>
+    </div>
+  </div>
+  </div>
+  </div>
+
     <div className="section">
 
       <div className="row">
         <div className="col s12 center">
           <h3><i className="mdi-content-send brown-text"></i></h3>
-          <h4>Contact Us</h4>
-          <p className="left-align light">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam scelerisque id nunc nec volutpat. Etiam pellentesque tristique arcu, non consequat magna fermentum ac. Cras ut ultricies eros. Maecenas eros justo, ullamcorper a sapien id, viverra ultrices eros. Morbi sem neque, posuere et pretium eget, bibendum sollicitudin lacus. Aliquam eleifend sollicitudin diam, eu mattis nisl maximus sed. Nulla imperdiet semper molestie. Morbi massa odio, condimentum sed ipsum ac, gravida ultrices erat. Nullam eget dignissim mauris, non tristique erat. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;</p>
+          <h5 className="center-align light">Pós-graduação Lato Sensu em Arquitetura de Software Distribuído
+          </h5>
         </div>
       </div>
 
@@ -69,7 +54,7 @@ export default (props) => {
     <div className="section no-pad-bot">
       <div className="container">
         <div className="row center">
-          <h5 className="header col s12 light">A modern responsive front-end framework based on Material Design</h5>
+          <h5 className="header col s12 light">Comércio eletrônico com opção de dropshipping</h5>
         </div>
       </div>
     </div>
@@ -80,10 +65,8 @@ export default (props) => {
     <div className="container">
       <div className="row">
         <div className="col l6 s12">
-          <h5 className="white-text">Company Bio</h5>
-          <p className="grey-text text-lighten-4">We are a team of college students working on this project like it's our full time job. Any amount would help support and continue development on this project and is greatly appreciated.</p>
-
-
+          <h5 className="white-text">Autor</h5>
+          <p className="grey-text text-lighten-4">Luis Felipe A. Fleury</p>
         </div>
         <div className="col l3 s12">
           <h5 className="white-text">Settings</h5>

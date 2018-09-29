@@ -13,7 +13,7 @@ export default (props) => {
                                 <p className="light">{props.descricao}</p>
                             </div>
                             <div class="card-action">
-                                <div onClick={() => props.clickItem()} className="btn-large waves-effect waves-light teal lighten-1">Ver detalhes</div>
+                                <a href={props.url} className="btn-large waves-effect waves-light teal lighten-1">Ver detalhes</a>
                             </div>
                         </div>
                     </div>

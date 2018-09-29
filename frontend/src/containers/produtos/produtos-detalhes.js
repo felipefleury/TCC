@@ -2,7 +2,8 @@ import * as React from 'react';
 import { connect } from "react-redux";
 import currencyFormatter from 'currency-formatter';
 import { carregarDadosProduto as carregar } from "./produtos-actions";
-
+import { AdicionarProduto } from '../Carrinho/carrinho-actions';
+import Notifications, {notify} from 'react-notify-toast';
 
 class detalhesProdutos extends React.Component {
 
@@ -19,6 +20,10 @@ class detalhesProdutos extends React.Component {
     this.props.carregar(id);
   }
   
+  adicionar = (item, qtd) => {
+      this.props.AdicionarProduto(item, qtd);
+      notify.show('Produto adicionado!', "custom", 3000, { background: '#ff0000', text: "#FFFFFF" });
+  }
 
   render() {
     let item = this.props.current.item;
@@ -26,9 +31,6 @@ class detalhesProdutos extends React.Component {
     let quantidade = 0;
     let disponibilidade = item.estoque.map((value, index) => {
         quantidade += value.quantidade;
-        return  <li>
-                    {value.quantidade} - {value.idFornecedor}
-                </li>
     });
     
     return (
@@ -55,7 +57,7 @@ class detalhesProdutos extends React.Component {
               </div>
               <ul>{disponibilidade}</ul>
             <div className="center-align">
-               {(item.estoque.length > 0 ? <a class="waves-effect waves-light btn"><i class="material-icons right">add_shopping_cart</i>Comprar</a> : undefined)}
+               {(item.estoque.length > 0 ? <a class="waves-effect waves-light btn" onClick={() => this.adicionar(item, 1)}><i class="material-icons right">add_shopping_cart</i>Comprar</a> : undefined)}
              </div>
          </div>
           
@@ -77,7 +79,8 @@ const mapStateToProps = (state) => (
 );
 
 const actionCreators = {
-  carregar
+  carregar,
+  AdicionarProduto
 }
 
 export default connect(mapStateToProps, actionCreators)(detalhesProdutos);

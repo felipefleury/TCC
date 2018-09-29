@@ -11,6 +11,11 @@ export function RedirectTo(url)
   return {type: Types.REDIRECT_TO, payload: url  };
 }
 
+export function Logoff(){
+  return {type: Types.LOGOFF, payload: null };
+}
+
+
 export function ClearRedirect()
 {
   return {type: Types.REDIRECT_CLEAR, payload: null  };

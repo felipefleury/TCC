@@ -1,4 +1,6 @@
 import { Types } from './types/actions';
+import axios from 'axios';
+
 //var jwtDecode = require('jwt-decode');
 
 // The initial state of the App
@@ -22,14 +24,22 @@ export default function LoadingReducer(
   {
   switch (action.type) {
     case Types.LOGIN_FAILED:
+      window.sessionStorage.removeItem("token");
+      axios.defaults.headers.common['Authorization'] = null;    
       return { ...state, loginError: action.message, LoginToken: null, loggedOn: false, currentUser: null }
     case Types.LOGIN_SUCCESS:
-      return { ...state, LoginToken: action.userData.token, loggedOn: true, loginError: "", currentUser: action.userData.user} 
-    case Types.CLEAR_LOGINDATA:
-      window.localStorage.setItem('token', "");
+      let token = action.payload;
+      let userData = parseJwt(token);
+      window.sessionStorage.setItem("token", token);
+      axios.defaults.headers.common['Authorization'] = "BEARER " + token;
+      return { ...state, LoginToken: token, loggedOn: true, loginError: "", currentUser: userData}
+    case Types.LOGOFF:
+      window.sessionStorage.removeItem("token");
+      axios.defaults.headers.common['Authorization'] = null;
       return { ...state, LoginToken: null, loggedOn: false, loginError: "", currentUser: null} 
     case Types.LOADING_DATA:
       return { ...state, loading: true, serverError: false }
+    case Types.CLOSE_MESSAGE:
     case Types.DATA_RECEIVED:
       return { ...state, loading: false, serverError: false }
     case Types.SERVER_ERROR:
