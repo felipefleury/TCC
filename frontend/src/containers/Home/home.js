@@ -1,38 +1,40 @@
 import * as React from 'react';
+import { connect } from "react-redux";
 
-export default (props) => {
+class Home extends React.Component {
+
+  constructor(props) {
+    super(props);
+  }
+
+  componentDidMount() {
+    //this.loadData();
+  }
+
+  render() {
+    let prods = this.props.produtos.result.filter((value, index) => {
+      return (index < 3);
+    }).map(value => {
+      let item = this.props.produtos.entities.produtos[value];
+      return (
+            <div className="col s12 m4">
+                <div className="icon-block">
+                  <h2 className="center brown-text"><img src={item.fotoUrl} style={{width:50}} /></h2>
+                  <h5 className="center">{item.nome}</h5>
+                  <p className="light">{item.descricao}</p>
+                </div>
+              </div>
+      )
+    });
+    
   return (
   <div>
 
   <div className="container">
   <div className="section">
 
-<div className="row">
-  <div className="col s12 m4">
-    <div className="icon-block">
-      <h2 className="center brown-text"><i className="material-icons">monetization_on</i></h2>
-      <h5 className="center">Speeds up development</h5>
-      <p className="light">We did most of the heavy lifting for you to provide a default stylings that incorporate our custom components. Additionally, we refined animations and transitions to provide a smoother experience for developers.</p>
-    </div>
-  </div>
-
-  <div className="col s12 m4">
-    <div className="icon-block">
-      <h2 className="center brown-text"><i className="material-icons">mood</i></h2>
-      <h5 className="center">User Experience Focused</h5>
-
-      <p className="light">By utilizing elements and principles of Material Design, we were able to create a framework that incorporates components and animations that provide more feedback to users. Additionally, a single underlying responsive system across all platforms allow for a more unified user experience.</p>
-    </div>
-  </div>
-
-  <div className="col s12 m4">
-    <div className="icon-block">
-      <h2 className="center brown-text"><i className="material-icons">settings</i></h2>
-      <h5 className="center">Easy to work with</h5>
-
-      <p className="light">We have provided detailed documentation as well as specific code examples to help new users get started. We are also always open to feedback and can answer any questions a user may have about Materialize.</p>
-    </div>
-  </div>
+<div className="row card">
+  {prods}
   </div>
   </div>
 
@@ -68,24 +70,18 @@ export default (props) => {
           <h5 className="white-text">Autor</h5>
           <p className="grey-text text-lighten-4">Luis Felipe A. Fleury</p>
         </div>
-        <div className="col l3 s12">
-          <h5 className="white-text">Settings</h5>
+        <div className="col l6 s12">
+          <h5 className="white-text">Tecnologias empregadas</h5>
           <ul>
-            <li><a className="white-text" href="#!">Link 1</a></li>
-            <li><a className="white-text" href="#!">Link 2</a></li>
-            <li><a className="white-text" href="#!">Link 3</a></li>
-            <li><a className="white-text" href="#!">Link 4</a></li>
+            <li><a className="white-text" target='_blank' href="https://reactjs.org/">React</a></li>
+            <li><a className="white-text" target='_blank' href="https://redux.js.org/">Redux</a></li>
+            <li><a className="white-text" target='_blank' href="https://serverless.com/">Serverless</a></li>
+            <li><a className="white-text" target='_blank' href="https://mochajs.org/">MochaJs</a></li>
+            <li><a className="white-text" target='_blank' href="https://aws.amazon.com/pt/lambda/">AWS Lambda</a></li>
+            <li><a className="white-text" target='_blank' href="https://aws.amazon.com/pt/dynamodb/">DynamoDB</a></li>
           </ul>
         </div>
-        <div className="col l3 s12">
-          <h5 className="white-text">Connect</h5>
-          <ul>
-            <li><a className="white-text" href="#!">Link 1</a></li>
-            <li><a className="white-text" href="#!">Link 2</a></li>
-            <li><a className="white-text" href="#!">Link 3</a></li>
-            <li><a className="white-text" href="#!">Link 4</a></li>
-          </ul>
-        </div>
+        
       </div>
     </div>
     <div className="footer-copyright">
@@ -100,3 +96,11 @@ export default (props) => {
 
   </div>
 )}
+}
+const mapStateToProps = (state) => (
+  {
+      produtos: state.produtos
+  }
+);
+
+export default connect(mapStateToProps)(Home);

@@ -18,6 +18,7 @@ import Estoque from './containers/Estoque/estoque';
 import Login from './containers/Login/login';
 import Notifications, {notify} from 'react-notify-toast';
 import {sitemap} from './sitemap';
+import { getData } from './containers/produtos/produtos-actions';
 import { ShowMessage, AlertTypes, Logoff } from './AppActions';
 import { LoginSuccess } from './containers/Login/login-actions';
 import Sair from './containers/Login/sair';
@@ -64,6 +65,8 @@ class App extends Component {
     if (token && this.props.logado == false) {
       this.props.LoginSuccess(token);
     }
+    this.props.getData();
+
   }
 
   getSitemap = () => {
@@ -131,4 +134,4 @@ const mapStateToProps = (state) => (
   }
 );
 
-export default connect(mapStateToProps, {ShowMessage, Logoff, LoginSuccess})(App);
+export default connect(mapStateToProps, {ShowMessage, Logoff, LoginSuccess, getData})(App);
