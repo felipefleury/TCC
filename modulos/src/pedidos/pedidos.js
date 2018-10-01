@@ -77,6 +77,8 @@ const prepareParameter = (value) => {
   
 }
 
+
+
 /************************************************************
  Funcao responsavel para atualizar o status do pedido pelo fornecedor.
  endpoint: PUT /pedidos/{id}/status
@@ -95,7 +97,7 @@ module.exports.pedidosAtualizarStatus = async (event, context) => {
     return({ statusCode: 401, headers: corsHeaders,  body: JSON.stringify({error: "Access denied"})});
   }
   if (!validar.checkRole(authUser, ['fornecedor'])){
-    return({ statusCode: 406, headers: corsHeaders,  body: JSON.stringify({error: "Access denied"})});
+    return({ statusCode: 403, headers: corsHeaders,  body: JSON.stringify({error: "Access denied"})});
   }
   
   // Fecha conexao anterior se ainda estiver aberta
@@ -108,6 +110,77 @@ module.exports.pedidosAtualizarStatus = async (event, context) => {
       console.log(event.body);
       var request = new sql.Request(conn);
       var queryString = `proc_PedidosAtualizarStatus ${idPedido}, '${authUser.id}', '${status}'`;
+      console.log(queryString);
+      return request.query(queryString);
+    })
+    .then(result => {
+      //Retorna resultados
+      resolve({ statusCode: 200, headers: corsHeaders});
+      //fecha conexao
+      sql.close();
+    })
+    .catch(err => {
+      // Loga erro, fecha conexao e devolve o codigo de erro
+      console.log("erro! " + err);
+      sql.close();
+      resolve({ statusCode: 500, headers: corsHeaders,  body: JSON.stringify({error: err})});
+    });
+  });
+}
+
+/************************************************************
+ Funcao responsavel para enviar pedidos pelo cliente
+ endpoint: POST /pedidos
+ visibilidade: <cliente> ou <vendedor> 
+ deploy: sls deploy function -f pedidosIncluir
+*************************************************************/
+module.exports.pedidosIncluir = async (event, context) => {
+  
+  // Pega valor passado como parametro no path da chamada 
+  let _parsed;
+  try {
+    _parsed = JSON.parse(event.body);
+  } catch (err) {
+    console.error(`Could not parse requested JSON ${event.body}: ${err.stack}`);
+    return {
+      statusCode: 400,
+      headers: corsHeaders,
+      body: JSON.stringify({error:`Could not parse json: ${err.stack}`})
+    };
+  }
+
+  const authUser = validar.validate(event.headers.Authorization);
+  if (!authUser){
+    return({ statusCode: 401, headers: corsHeaders,  body: JSON.stringify({error: "Access denied"})});
+  }
+  if (!validar.checkRole(authUser, ['vendedor', 'cliente'])){
+    return({ statusCode: 403, headers: corsHeaders,  body: JSON.stringify({error: "Access denied"})});
+  }
+  
+  let itens = _parsed.produtos.map(value => {
+    var decoded = jwt.verify(value.token, JWT_ENCRYPTION_CODE);
+    if (!decoded) {
+      return({ statusCode: 400, headers: corsHeaders,  body: JSON.stringify({error: `Product token expired for id:${value.id}!`})});
+    }
+    return {quantidade: value.quantidade, preco: decoded.preco, idProduto: decoded.id, nome: value.produto}
+  })
+
+  console.log(itens);
+  console.log(_parsed.faturamento);
+
+  let pedido = {faturamento: _parsed.faturamento, itens: itens, idUsuario: authUser.id}
+  console.log(JSON.stringify(pedido));
+  
+  // Fecha conexao anterior se ainda estiver aberta
+  sql.close();
+  return await new Promise((resolve, reject) => {
+    //Abre conexao com o banco de dados
+    sql.connect(connStr)
+    .then(conn => {
+      //Cria consulta
+      console.log(event.body);
+      var request = new sql.Request(conn);
+      var queryString = `proc_PedidosIncluir '${JSON.stringify(pedido)}'`;
       console.log(queryString);
       return request.query(queryString);
     })

@@ -18,6 +18,12 @@ class ListaProdutos extends React.Component {
     this.props.getData();
   }
 
+  clickItem(id) {
+    this.props.buscarDetalhes(id);
+    //this.props.history.push(`${process.env.PUBLIC_URL}/produtos` + "/" + id);
+    //this.props.buscarDetalhes(id);
+    this.props.history.push(`${process.env.PUBLIC_URL}/produtos` + "/" + id);
+  }
 
   render() {
     let items = this.props.result.map((value, index) => {
@@ -29,7 +35,7 @@ class ListaProdutos extends React.Component {
                           nome={item.nome} 
                           id={item.id}
                           descricao={item.descricao} 
-                          clickItem={(e) => this.clickItem(item.id)}
+                          clickItem={e => this.props.history.push(`${process.env.PUBLIC_URL}/produtos` + "/" + item.id)}
                           url={`${process.env.PUBLIC_URL}/produtos/${item.id}`}
                 />
     });

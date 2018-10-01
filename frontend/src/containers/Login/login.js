@@ -4,12 +4,15 @@ import { Formik } from 'formik';
 import ServiceLogin from './login-service';
 import { LoginSuccess, LoginFailed } from './login-actions';
 import axios from 'axios';
+const queryString = require('query-string');
 
 class Login extends React.Component {
+  redirectTo = null;
 
   constructor(props) {
     super(props);
-  }
+    this.redirectTo = queryString.parse(this.props.location.search).redirectTo ;
+}
 
   state = {
     username: "",
@@ -18,6 +21,9 @@ class Login extends React.Component {
   };
 
   componentDidMount() {
+      //if (this.redirectTo === undefined) this.redirectTo = "/";
+      console.log(this.redirectTo);
+      
   }
 
   doLogin = (data, setSubmitting) => {
@@ -26,7 +32,8 @@ class Login extends React.Component {
     service.login(data).then(res => {
         setSubmitting(false);
         this.props.LoginSuccess(res);
-        alert(res);
+        this.props.history.push(`${this.redirectTo}`);
+        //alert(res);
     }).catch(err => {
         setSubmitting(false)
         if (err.response.status === 404) {
@@ -60,12 +67,12 @@ class Login extends React.Component {
                 }) => (
                     <form onSubmit={handleSubmit}>
                         <div className="card center-align">
-                            <div class="card-image">
+                            <div className="card-image">
                                 <img src="background2.jpg" alt="Unsplashed background img 2" />
                             </div>
-                            <div class="card-stacked">
-                                <span class="card-title">Login</span>
-                                <div class="card-content">
+                            <div className="card-stacked">
+                                <span className="card-title">Login</span>
+                                <div className="card-content">
                                     <div className="input-field">
                                         <input
                                             type="text"
@@ -76,7 +83,7 @@ class Login extends React.Component {
                                             onBlur={handleBlur}
                                             value={values.username}
                                         />
-                                        <label for="username">login</label>
+                                        <label htmlFor="username">login</label>
                                     </div>
                                     <div className="input-field">
                                         <input
@@ -88,14 +95,14 @@ class Login extends React.Component {
                                             onBlur={handleBlur}
                                             value={values.password}
                                         />
-                                        <label for="password">senha</label>
+                                        <label htmlFor="password">senha</label>
                                         {this.state.message}
                                     </div>
                                 </div>
-                                <div class="card-action">
+                                <div className="card-action">
                                     {isSubmitting ? 
-                                        <div class="progress">
-                                            <div class="indeterminate"></div>
+                                        <div className="progress">
+                                            <div className="indeterminate"></div>
                                         </div>
                                         : undefined
                                     }

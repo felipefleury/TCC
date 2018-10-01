@@ -36,7 +36,7 @@ export default function LoadingReducer(
     case Types.LOGOFF:
       window.sessionStorage.removeItem("token");
       axios.defaults.headers.common['Authorization'] = null;
-      return { ...state, LoginToken: null, loggedOn: false, loginError: "", currentUser: null} 
+      return { ...state, LoginToken: null, loggedOn: false, loginError: "", currentUser: null, loading: false} 
     case Types.LOADING_DATA:
       return { ...state, loading: true, serverError: false }
     case Types.CLOSE_MESSAGE:

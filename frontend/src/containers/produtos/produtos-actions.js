@@ -58,13 +58,8 @@ export function getData() {
   
   return (dispatch, getState) => {
     dispatch(RequestingData());
-    console.log(Date.now());
-
     if (getState().produtos.result.length > 0){
-      console.log(getState().produtos.cache);
-      console.log(Date.now() + 100);
-      console.log(getState().produtos);
-      if (getState().produtos.cache < Date.now() + 100){
+       if (getState().produtos.cache < Date.now() + 100){
         console.log("cached");
         return dispatch(DataReceived());
       }

@@ -13,6 +13,8 @@ export default function ProdutoReducer(
   switch (action.type) {
     case Types.ESTOQUE_REFRESH:
       return { ...state, produtos: action.payload}
+    case "LOGOFF":
+      return { ...state, produtos: []}
     default:
       return state;
 

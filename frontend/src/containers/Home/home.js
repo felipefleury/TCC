@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { connect } from "react-redux";
+import './home.css';
 
 class Home extends React.Component {
 
@@ -10,6 +11,12 @@ class Home extends React.Component {
   componentDidMount() {
     //this.loadData();
   }
+  capitalize = value => 
+  {
+      return value.charAt(0).toUpperCase() + value.toLowerCase().slice(1);
+  }
+
+  clickItem = id => this.props.history.push(`${process.env.PUBLIC_URL}/produtos/${id}`);
 
   render() {
     let prods = this.props.produtos.result.filter((value, index) => {
@@ -18,10 +25,10 @@ class Home extends React.Component {
       let item = this.props.produtos.entities.produtos[value];
       return (
             <div className="col s12 m4">
-                <div className="icon-block">
-                  <h2 className="center brown-text"><img src={item.fotoUrl} style={{width:50}} /></h2>
-                  <h5 className="center">{item.nome}</h5>
-                  <p className="light">{item.descricao}</p>
+                <div className="icon-block item-card">
+                  <h2 className="center brown-text"><a onClick={() => this.clickItem(item.id)}><img src={item.fotoUrl} style={{width:50}} /></a></h2>
+                  <h5 className="center">{this.capitalize(item.nome)}</h5>
+                  <p className="light">{item.descricao} [<a onClick={() => this.clickItem(item.id)}>clique aqui</a>]</p>
                 </div>
               </div>
       )
@@ -31,12 +38,14 @@ class Home extends React.Component {
   <div>
 
   <div className="container">
-  <div className="section">
-
-<div className="row card">
-  {prods}
-  </div>
-  </div>
+    <div className="section">
+      <div className="row">
+        {prods}
+      </div>
+      <div className="row">
+        <a class="waves-effect waves-light btn" onClick={() => this.props.history.push(`${process.env.PUBLIC_URL}/produtos`)}>Mais produtos</a>
+      </div>
+    </div>
 
     <div className="section">
 
@@ -52,7 +61,7 @@ class Home extends React.Component {
   </div>
 
 
-  <div className="parallax-container valign-wrapper">
+  <div className="parallax-container valign-wrapper imageBack1">
     <div className="section no-pad-bot">
       <div className="container">
         <div className="row center">
@@ -60,7 +69,6 @@ class Home extends React.Component {
         </div>
       </div>
     </div>
-    <div className="parallax"><img src="background3.jpg" alt="Unsplashed background img 3" /></div>
   </div>
 
   <footer className="page-footer teal">

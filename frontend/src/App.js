@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import { connect } from "react-redux";
 import './App.css';
 import axios from 'axios';
-import { Route } from 'react-router-dom';
-
+import { Route, withRouter } from 'react-router-dom';
 import Settings from './util/settings';
 //import Routing from './routing';
 import Message from './containers/Message/Message';
@@ -43,14 +42,14 @@ class App extends Component {
       }, 
       (error) => {
         if (error.response) {
+          console.log(error.response.status);
           if (error.response.status === 403) {
               this.props.ShowMessage(AlertTypes.Error, "Acesso negado!", "Voce nao tem acesso a essa pagina!", null);
           }
           if (error.response.status === 401) {
-            
             if (window.location.pathname != `${process.env.PUBLIC_URL}/login` && window.location.pathname != `${process.env.PUBLIC_URL}/`) {
-              window.location.href = `${process.env.PUBLIC_URL}/login`;
               this.props.Logoff();
+              this.props.history.push(`${process.env.PUBLIC_URL}/login?redirectTo=${window.location.pathname}`);
             }
           }
         }
@@ -100,7 +99,7 @@ class App extends Component {
   render() {
     return (
         <div>
-          <Navigation sitemap={this.getSitemap()} logado={this.props.logado} />
+          <Navigation sitemap={this.getSitemap()} currentUser={this.props.currentUser} logado={this.props.logado} onClick={(url) => this.props.history.push(`${process.env.PUBLIC_URL}${url}`)} />
           <div>
             <Topo />
             <div>
@@ -134,4 +133,4 @@ const mapStateToProps = (state) => (
   }
 );
 
-export default connect(mapStateToProps, {ShowMessage, Logoff, LoginSuccess, getData})(App);
+export default withRouter(connect(mapStateToProps, {ShowMessage, Logoff, LoginSuccess, getData})(App));

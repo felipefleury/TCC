@@ -26,6 +26,8 @@ class detalhesProdutos extends React.Component {
   }
 
   render() {
+    if (this.props.loading) {return null};
+    
     let item = this.props.current.item;
     if (!item) return null;
     let quantidade = 0;
@@ -37,7 +39,7 @@ class detalhesProdutos extends React.Component {
   <div className="row">
         <div className="col s12 m4">
             <div className="icon-block">
-            <h2 className="center brown-text"><img src={item.fotoUrl} width={200} /></h2>
+            <h2 className="center brown-text"><img src={item.fotoUrl} width={150} /></h2>
             </div>
         </div>
         <div className="col s12 m4">
@@ -52,8 +54,7 @@ class detalhesProdutos extends React.Component {
               <h4 className="center">Por {currencyFormatter.format(item.preco, { locale: 'pt-br' })}</h4>
             </div>
             <div className="icon-block">
-              <i className="large material-icons" style={{fontSize:30}}>local_shipping</i>
-              <p className="light">Disponibilidade : {quantidade} un.</p>
+              <i className="large material-icons" style={{fontSize:30}}>local_shipping</i><span style={{marginBottom:10}}> Disponibilidade : {quantidade} un.</span>
               </div>
               <ul>{disponibilidade}</ul>
             <div className="center-align">

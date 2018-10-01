@@ -1,20 +1,22 @@
 import * as React from 'react';
+import './listitem.css';
 
 export default (props) => {
   return (
                 <div className="col s12 m12">
-                    <div class="card horizontal">
-                        <div class="card-image">
-                            <img src={props.fotoUrl} style={{width:200}} />
+                    <div className="card responsive-horizontal" onClick={() => props.clickItem()}>
+                        <div className="card-image center-align">
+                            <img src={props.fotoUrl} style={{width:200, display: "block", marginLeft: "auto", marginRight: "auto"}} className="center-align" />
                         </div>
-                        <div class="card-stacked">
-                            <span class="card-title">{props.nome}</span>
-                            <div class="card-content">
+                        <div>
+                            <span className="card-title center-align">{props.nome}</span>
+                            <div className="card-content center-align">
                                 <p className="light">{props.descricao}</p>
                             </div>
-                            <div class="card-action">
-                                <a href={props.url} className="btn-large waves-effect waves-light teal lighten-1">Ver detalhes</a>
-                            </div>
+                            
+                        </div>
+                        <div className="card-action right-align show-on-medium-and-down hide-on-large">
+                            <div onClick={() => props.clickItem()} className="btn-large waves-effect waves-light teal lighten-1">Ver detalhes</div>
                         </div>
                     </div>
                 </div>

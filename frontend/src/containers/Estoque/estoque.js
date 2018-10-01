@@ -19,6 +19,8 @@ class ListaEstoque extends React.Component {
 
 
   render() {
+    if (!this.props.lista || this.props.lista.length == 0) return null;
+
     let items = this.props.lista.map((value, index) => {
         return (<tr><td>{value.idProduto}</td><td>{value.quantidade}</td></tr>)
     });

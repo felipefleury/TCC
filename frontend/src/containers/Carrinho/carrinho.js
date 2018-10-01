@@ -10,17 +10,24 @@ class Carrinho extends React.Component {
     super(props);
   }
 
+  fecharCompra = () => {
+    let rows = this.props.produtos.map(value => {
+        return {token: value.produto.token, quantidade: value.quantidade, produto: value.produto.nome, id: value.produto.id};
+    });
+    console.log(JSON.stringify(rows));
+    alert(JSON.stringify(rows));
+  }
 
   render() {
     let total = 0; 
     let rows = this.props.produtos.map(value => {
         total += value.quantidade * value.produto.preco;
-        return <Item produto={value.produto} id={value.id} quantidade={value.quantidade} AlterarQuantidade={this.props.AlterarQuantidade} Remove={this.props.RemoverProduto} disponivel={value.disponivel} />
+        return <Item produto={value.produto} onClick={() => this.props.history.push(`${process.env.PUBLIC_URL}/produtos/${value.id}`)} id={value.id} quantidade={value.quantidade} AlterarQuantidade={this.props.AlterarQuantidade} Remove={this.props.RemoverProduto} disponivel={value.disponivel} />
     });
     return (
   <div className="row">
     <h5 className='center-align'>Carrinho de compras</h5>
-        <table>
+        <table className="striped highlight">
             <thead>
                 <tr>
                     <th>&nbsp;</th>
@@ -42,7 +49,7 @@ class Carrinho extends React.Component {
             </tfoot>
         </table>
         <div className="row right-align">
-          <div className="btn-large waves-effect waves-light teal lighten-1">Fechar Compra</div>
+          <div className="btn-large waves-effect waves-light teal lighten-1" onClick={() => this.fecharCompra()}>Fechar Compra</div>
         </div>
                   
   </div>

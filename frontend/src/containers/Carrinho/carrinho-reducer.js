@@ -57,6 +57,9 @@ export default function ProdutoReducer(
         }) 
         saveStorage(produtos);
         return {...state, produtos: produtos};
+    case "LOGOFF":
+        saveStorage([]);
+        return {...state, produtos:[]}
     default:
       return state;
 

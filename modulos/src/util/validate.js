@@ -5,21 +5,20 @@ module.exports.validate = (token) =>
     {
         if (token != '') {
             try {
-              /*console.log(token);
+              console.log(token);
               if (token.substring(0, 7) == 'BEARER ') {
                 token = token.substring(7);
                 console.log(token);
                 
               }
-                console.log(token);
-                */
-                var decoded = jwt.verify(token, JWT_ENCRYPTION_CODE);
-              } catch(err) {
-                console.error(`Erro ao validar token ${token}. Error: ${err.stack}`);
-                console.log(err);
-                return false;
-              }
-              return decoded;
+              console.log(token);
+              var decoded = jwt.verify(token, JWT_ENCRYPTION_CODE);
+            } catch(err) {
+              console.error(`Erro ao validar token ${token}. Error: ${err.stack}`);
+              console.log(err);
+              return false;
+            }
+            return decoded;
         }
         return null;
     }

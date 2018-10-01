@@ -4,8 +4,8 @@ import currencyFormatter from 'currency-formatter';
 export default (props) => {
   return (
             <tr>
-                    <td><a href={`/produtos/${props.id}`}><img src={props.produto.fotoUrl} style={{width:50}} /></a></td>
-                    <td><a href={`/produtos/${props.id}`}>{props.produto.nome}</a></td>
+                    <td><div onClick={() => props.onClick()}><img src={props.produto.fotoUrl} style={{width:50}} /></div></td>
+                    <td><div onClick={() => props.onClick()}>{props.produto.nome}</div></td>
                     <td style={{width:100}}>
                     {props.quantidade == props.disponivel ?   
                             <i className={"material-icons grey-text text-lighten-2"}>arrow_drop_down</i>
