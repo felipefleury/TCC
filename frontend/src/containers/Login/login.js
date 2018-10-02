@@ -3,15 +3,14 @@ import { connect } from "react-redux";
 import { Formik } from 'formik';
 import ServiceLogin from './login-service';
 import { LoginSuccess, LoginFailed } from './login-actions';
-import axios from 'axios';
-const queryString = require('query-string');
 
 class Login extends React.Component {
   redirectTo = null;
 
   constructor(props) {
     super(props);
-    this.redirectTo = queryString.parse(this.props.location.search).redirectTo ;
+
+    this.redirectTo = this.props.location.search.slice(12);
 }
 
   state = {

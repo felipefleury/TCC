@@ -38,14 +38,7 @@ class Home extends React.Component {
   <div>
 
   <div className="container">
-    <div className="section">
-      <div className="row">
-        {prods}
-      </div>
-      <div className="row">
-        <a class="waves-effect waves-light btn" onClick={() => this.props.history.push(`${process.env.PUBLIC_URL}/produtos`)}>Mais produtos</a>
-      </div>
-    </div>
+
 
     <div className="section">
 

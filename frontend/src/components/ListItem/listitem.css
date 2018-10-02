@@ -28,4 +28,11 @@
     .card.responsive-horizontal .card-stacked .card-content {
       flex-grow: 1;
     }
+    .card.responsive-horizontal .card-stacked .card-action {
+      flex-grow: 1;
+    }
+.card-foto {
+    width: 200px
+}
+
   }
