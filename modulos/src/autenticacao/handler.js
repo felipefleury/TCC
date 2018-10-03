@@ -73,7 +73,7 @@ module.exports.deleteUser = async (event, context) => {
 ******************************************************************/
 module.exports.authenticate = async (event, context) => {
 
-  let _parsed;
+  let _parsed = null;
   try {
     _parsed = JSON.parse(event.body);
   } catch (err) {
