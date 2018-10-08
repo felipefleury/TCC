@@ -1,0 +1,16 @@
+# Arquivo de exemplo com dados secretos. 
+# Para testar é necessário
+# 1 - alterar o nome do arquivo para env.yml
+# 2 - colocar a connection string correta
+
+prod:
+  cnEstoque: "Server=<servername>;Database=<database>;User Id=<username>;Password=<password>;"
+  cnPedidos: "Server=<servername>;Database=<database>;User Id=<username>;Password=<password>;"
+  cnPedidos: "Server=<servername>;Database=<database>;User Id=<username>;Password=<password>;"
+
+default:
+  cnEstoque: "Server=<servername>;Database=<database>;User Id=<username>;Password=<password>;"
+  cnPedidos: "Server=<servername>;Database=<database>;User Id=<username>;Password=<password>;"
+  cnEntrega: "Server=<servername>;Database=<database>;User Id=<username>;Password=<password>;"
+
+   
