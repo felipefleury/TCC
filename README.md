@@ -35,6 +35,12 @@ Este projeto está separado em 3 partes.
 2. Rodar o comando "npm install" no diretorio frontend
 3. Executar o front end com "npm start"
 
+#contato
+
+Luis Felipe A. Fleury 
+felipefleury@gmail.com
+https://www.linkedin.com/in/luis-felipe-assump%C3%A7%C3%A3o-fleury-b7a32294/
+
 
 # Tecnologias utilizadas
 
