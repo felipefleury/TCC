@@ -37,7 +37,7 @@ Este projeto está separado em 3 partes.
 
 ## Tecnologias utilizadas
 
-####Módulos
+###Módulos
 - [NodeJS](www.nodejs.org)
 - [AWS Lambda](https://aws.amazon.com/pt/lambda/)
 - [AWS Gateway(https://aws.amazon.com/pt/apigateway/)
@@ -47,19 +47,19 @@ Este projeto está separado em 3 partes.
 - [AWS SQS](https://aws.amazon.com/pt/sqs/)
 - [JWT](https://jwt.io)
 
-####Front end
+###Front end
 - [ReactJs](https://reactjs.org/)
 - [Redux](https://redux.js.org/)
 - [Axios](https://github.com/axios/axios)
 - [MaterializeCss](https://materializecss.com/)
 
-####Testes
+###Testes
 - [MochaJs](https://mochajs.org/)
 - [ChaiJs](https://www.chaijs.com/)
 
 
 
-### contato
+## contato
 Luis Felipe A. Fleury 
 
 - felipefleury@gmail.com
