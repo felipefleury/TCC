@@ -7,9 +7,9 @@ O front end desenvolvido é para testar o modelo de programação para o desenvo
 
 Este projeto está separado em 3 partes.
 
-- Modulos - Backend da aplicação
-- Front End - Interface WEB para testes
-- Testes - Testes automatizados
+- [Modulos](/modulos) - Backend da aplicação
+- [Front End](/frontend) - Interface WEB para testes
+- [Testes](/testes) - Testes automatizados
 
 ## Instruções para instalação e uso
 
