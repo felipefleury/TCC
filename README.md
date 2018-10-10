@@ -40,7 +40,7 @@ Este projeto está separado em 3 partes.
 ### Módulos
 - [NodeJS](www.nodejs.org)
 - [AWS Lambda](https://aws.amazon.com/pt/lambda/)
-- [AWS Gateway(https://aws.amazon.com/pt/apigateway/)
+- [AWS Gateway](https://aws.amazon.com/pt/apigateway/)
 - [Serverless](http://serverless.com)
 - [DynamoDB](https://aws.amazon.com/pt/dynamodb)
 - [SQL Server](https://www.microsoft.com/pt-br/sql-server/sql-server-2017)
