@@ -112,7 +112,7 @@ functions:
           cors: true
   estoqueProduto:
     handler: src/estoque/estoque.estoqueProduto
-    memorySize: 128
+    memorySize: 256
     events:
       - http: 
           method: GET
@@ -123,7 +123,7 @@ functions:
 #MODULO DE CADASTROS          
   produtos_Listar:
     handler: src/cadastros/produtos.listar
-    memorySize: 128
+    memorySize: 256
     events:
       - http: 
           method: GET
@@ -132,7 +132,7 @@ functions:
           cors: true  
   produtos_Buscar:
     handler: src/cadastros/produtos.buscar
-    memorySize: 128
+    memorySize: 256
     events:
       - http: 
           method: GET
